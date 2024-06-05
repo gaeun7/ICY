@@ -18,14 +18,14 @@ public class CommentController {
         this.commentService = commentService;
     }
 
-    @PostMapping("/{id}/comments")
-    public CommentResponseDto addComment(@RequestBody CommentRequestDto requestDto) {
-        return commentService.createcomment(requestDto);
+    @PostMapping("/comments")
+    public CommentResponseDto writeComment(@RequestBody CommentRequestDto requestDto) {
+        return commentService.writeComment(requestDto);
     }
 
-    @GetMapping("/{id}")
-    public List<CommentResponseDto> getCommentsForSchedule(@PathVariable Long id) {
-        return commentService.getComments(id);
+    @GetMapping("/{feed_id}")
+    public List<CommentResponseDto> getComments(@PathVariable Long feed_id) {
+        return commentService.getComments(feed_id);
     }
 
     @PutMapping("/{id}/comments/{commentsid}")

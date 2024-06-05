@@ -7,7 +7,6 @@ import lombok.Setter;
 import java.util.Date;
 import java.util.List;
 
-
 @Entity
 @Getter
 @Setter
@@ -35,18 +34,31 @@ public class User {
     @Column(nullable = false)
     private Date state;
 
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)
     private Date created_at;
 
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)
     private Date updated_at;
 
     @Column(nullable = false)
     private String user_id;
 
-    @OneToMany(mappedBy = "id2", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
 
-    @OneToMany(mappedBy = "id2", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Newsfeed> newsfeeds;
+
+    @PrePersist
+    protected void onCreate() {
+        created_at = new Date();
+        updated_at = new Date();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updated_at = new Date();
+    }
 }
