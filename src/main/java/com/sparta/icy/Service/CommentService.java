@@ -7,7 +7,7 @@ import com.sparta.icy.Repository.CommentRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,7 +39,7 @@ public class CommentService {
             return null;
         }
         comment.setContent(requestDto.getContent());
-        comment.setUpdated_at(new Date());
+        comment.setUpdated_at(LocalDateTime.now()); // 수정
         Comment savedComment = commentRepository.save(comment);
         return new CommentResponseDto(savedComment);
     }

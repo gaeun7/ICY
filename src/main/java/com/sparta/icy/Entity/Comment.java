@@ -1,18 +1,18 @@
 package com.sparta.icy.Entity;
 
-
 import com.sparta.icy.Dto.CommentRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
+@Table(name = "comment")
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,32 +29,31 @@ public class Comment {
     @Column(nullable = false)
     private String content;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(nullable = false)
-    private Date created_at;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(nullable = false)
-    private Date updated_at;
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime created_at;
 
     @Column(nullable = false)
-    private Long like;
+    private LocalDateTime updated_at;
+
+    @Column(nullable = false)
+    private Long like = 0L;
 
     public Comment(CommentRequestDto commentRequestDto) {
         this.content = commentRequestDto.getContent();
-        this.created_at = commentRequestDto.getCreated_at();
-        this.updated_at = commentRequestDto.getUpdated_at();
-        this.like = commentRequestDto.getLike();
+        this.created_at = LocalDateTime.now();
+        this.updated_at = LocalDateTime.now();
+        this.like = 0L;
     }
-
     @PrePersist
     protected void onCreate() {
-        created_at = new Date();
-        updated_at = new Date();
+        created_at = LocalDateTime.now();
+        updated_at = LocalDateTime.now();
+        if (like == null) {
+            like = 0L;
+        }
     }
-
     @PreUpdate
     protected void onUpdate() {
-        updated_at = new Date();
+        updated_at = LocalDateTime.now();
     }
 }
