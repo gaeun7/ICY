@@ -60,7 +60,6 @@ public class User {
 
     public void update(UserUpdateRequest req) {
         this.nickname = req.getNickname();
-        this.email = req.getEmail();
         this.intro = req.getIntro();
         this.password = req.getNewPassword();
 
