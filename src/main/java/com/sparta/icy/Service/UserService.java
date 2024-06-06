@@ -1,20 +1,31 @@
 package com.sparta.icy.Service;
 
+import com.sparta.icy.Dto.LoginRequestDto;
+import com.sparta.icy.Dto.SignupRequestDto;
 import com.sparta.icy.Dto.UserProfileResponse;
 import com.sparta.icy.Dto.UserUpdateRequest;
 import com.sparta.icy.Entity.User;
 import com.sparta.icy.Repository.UserRepository;
+import com.sparta.icy.jwt.JwtUtil;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtUtil = jwtUtil;
     }
 
     public UserProfileResponse getUser(long id) {
@@ -65,7 +76,39 @@ public class UserService {
                 hasSpecialChar = true;
             }
         }
-
         return hasUpperCase && hasLowerCase && hasDigit && hasSpecialChar;
     }
+
+    public void signup(SignupRequestDto requestDto) {
+        String username = requestDto.getUsername();
+        String password = passwordEncoder.encode(requestDto.getPassword());
+
+        // 회원 중복 확인
+        Optional<User> checkuser = userRepository.findByUsername(username);
+        if (checkuser.isPresent()) {
+            throw new IllegalArgumentException("중복된 사용자가 존재합니다.");
+        }
+
+        User user = new User(username, password, requestDto.getEmail(), requestDto.getIntro(), requestDto.getNickname());
+        userRepository.save(user);
+    }
+
+    public void login(LoginRequestDto requestDto, HttpServletResponse response) {
+        String username = requestDto.getUsername();
+        String password = requestDto.getPassword();
+
+        Optional<User> checkuser = userRepository.findByUsername(username);
+        if (checkuser.isEmpty()) {
+            throw new IllegalArgumentException("등록된 사용자가 없습니다.");
+        }
+
+        User user = checkuser.get();
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+        String token = jwtUtil.createToken(username);
+        jwtUtil.addJwtToCookie(token, response);
+    }
 }
+
+

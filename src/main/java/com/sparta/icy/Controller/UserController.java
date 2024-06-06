@@ -1,14 +1,19 @@
 package com.sparta.icy.Controller;
 
+import com.sparta.icy.Dto.LoginRequestDto;
+import com.sparta.icy.Dto.SignupRequestDto;
 import com.sparta.icy.Dto.UserProfileResponse;
 import com.sparta.icy.Dto.UserUpdateRequest;
 import com.sparta.icy.Entity.User;
 import com.sparta.icy.Service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
+@Controller
 @RequestMapping("/api/users")
 public class UserController {
 
@@ -29,4 +34,39 @@ public class UserController {
         return ResponseEntity.ok(userService.updateUser(id, req));
     }
 
+    @GetMapping("/login-page")
+    public String loginPage() {
+        return "login";
+    }
+
+    @GetMapping("/signup")
+    public String signupPage() {
+        return "signup";
+    }
+
+    @GetMapping("/login-success")
+    public String mainPage() {
+        return "mainpage";
+    }
+
+    @PostMapping("/signup")
+    public ResponseEntity<String> signup(@ModelAttribute SignupRequestDto requestDto) {
+        try {
+            userService.signup(requestDto);
+            return ResponseEntity.ok("User registered successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Registration failed");
+        }
+    }
+
+    @PostMapping("/login")
+    public String login(LoginRequestDto requestDto, HttpServletResponse response){
+        System.out.println("login test");
+        try {
+            userService.login(requestDto, response);
+        } catch (Exception e) {
+            return "redirect:api/users/login-page?error=1";
+        }
+        return "mainpage";
+    }
 }

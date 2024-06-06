@@ -66,6 +66,15 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Newsfeed> newsfeeds;
 
+    public User(String username, String password, String email, String intro, String nickname) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.intro = intro;
+        this.nickname = nickname;
+        setStatus(Status.ENROLLED);
+    }
+
     public void update(UserUpdateRequest req) {
         this.nickname = req.getNickname();
         this.intro = req.getIntro();

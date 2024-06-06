@@ -21,8 +21,6 @@ import java.util.Date;
 public class JwtUtil {
     // Header KEY 값
     public static final String AUTHORIZATION_HEADER = "Authorization";
-    // 사용자 권한 값의 KEY
-    public static final String AUTHORIZATION_KEY = "auth";
     // Token 식별자
     public static final String BEARER_PREFIX = "Bearer ";
     // 토큰 만료시간
@@ -58,7 +56,7 @@ public class JwtUtil {
     // JWT Cookie 에 저장
     public void addJwtToCookie(String token, HttpServletResponse res) {
         try {
-            token = URLEncoder.encode(token, "utf-8").replaceAll("\\+", "%20"); // Cookie Value 에는 공백이 불가능해서 encoding 진행
+            token = URLEncoder.encode(token, "utf-8").replaceAll("\\+", "%20");
 
             Cookie cookie = new Cookie(AUTHORIZATION_HEADER, token); // Name-Value
             cookie.setPath("/");

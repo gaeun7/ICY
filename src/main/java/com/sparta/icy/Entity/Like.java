@@ -31,7 +31,8 @@ public class Like {
     @Column(nullable = false)
     private Long likecnt = 0L;
 
-    @Column(nullable = false)
+    @Column
+    @Enumerated(value = EnumType.STRING)
     private ContentType contentType;
 
     @Column(nullable = false, updatable = false)
