@@ -33,8 +33,8 @@ public class CommentService {
                 .collect(Collectors.toList());
     }
 
-    public CommentResponseDto updateComment(Long id, CommentRequestDto requestDto) {
-        Comment comment = commentRepository.findById(id).orElse(null);
+    public CommentResponseDto updateComment(Long comments_id, CommentRequestDto requestDto) {
+        Comment comment = commentRepository.findById(comments_id).orElse(null);
         if (comment == null) {
             return null;
         }
@@ -44,8 +44,8 @@ public class CommentService {
         return new CommentResponseDto(savedComment);
     }
 
-    public ResponseEntity<?> deleteComment(Long id) {
-        Comment comment = commentRepository.findById(id).orElse(null);
+    public ResponseEntity<?> deleteComment(Long comments_id) {
+        Comment comment = commentRepository.findById(comments_id).orElse(null);
         if (comment == null) {
             return ResponseEntity.notFound().build();
         }

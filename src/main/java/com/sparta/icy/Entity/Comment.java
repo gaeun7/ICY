@@ -19,7 +19,7 @@ public class Comment {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "id2", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @ManyToOne
@@ -44,6 +44,7 @@ public class Comment {
         this.updated_at = LocalDateTime.now();
         this.like = 0L;
     }
+
     @PrePersist
     protected void onCreate() {
         created_at = LocalDateTime.now();
@@ -52,6 +53,7 @@ public class Comment {
             like = 0L;
         }
     }
+
     @PreUpdate
     protected void onUpdate() {
         updated_at = LocalDateTime.now();

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/boards")
+@RequestMapping("/api/boards/comments")
 public class CommentController {
     private final CommentService commentService;
 
@@ -18,7 +18,7 @@ public class CommentController {
         this.commentService = commentService;
     }
 
-    @PostMapping("/comments")
+    @PostMapping
     public CommentResponseDto writeComment(@RequestBody CommentRequestDto requestDto) {
         return commentService.writeComment(requestDto);
     }
@@ -28,9 +28,9 @@ public class CommentController {
         return commentService.getComments(feed_id);
     }
 
-    @PutMapping("/{id}/comments/{commentsid}")
-    public ResponseEntity<CommentResponseDto> updateComment(@PathVariable Long id, @PathVariable Long commentsid, @RequestBody CommentRequestDto requestDto) {
-        CommentResponseDto updatedComment = commentService.updateComment(id, requestDto);
+    @PutMapping("/{comments_id}")
+    public ResponseEntity<CommentResponseDto> updateComment(@PathVariable Long comments_id, @RequestBody CommentRequestDto requestDto) {
+        CommentResponseDto updatedComment = commentService.updateComment(comments_id, requestDto);
         if (updatedComment != null) {
             return new ResponseEntity<>(updatedComment, HttpStatus.OK);
         } else {
@@ -38,8 +38,8 @@ public class CommentController {
         }
     }
 
-    @DeleteMapping("/{id}/comments/{commentsid}")
-    public ResponseEntity<?> deleteComment(@PathVariable Long id, @PathVariable Long commentsid) {
-        return commentService.deleteComment(id);
+    @DeleteMapping("/{comments_id}")
+    public ResponseEntity<?> deleteComment(@PathVariable Long comments_id) {
+        return commentService.deleteComment(comments_id);
     }
 }

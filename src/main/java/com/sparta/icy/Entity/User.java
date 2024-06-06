@@ -1,49 +1,64 @@
 package com.sparta.icy.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.sparta.icy.Dto.UserUpdateRequest;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.validator.constraints.Length;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
 @Entity
 @Getter
+@Builder
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @JsonIgnore
+    @Length(min = 10, max = 20)
+    @Column(unique = true, nullable = false)
     private String username;
 
-    @Column(nullable = false)
+    @JsonIgnore
+    @Length(min = 10)
     private String password;
 
-    @Column(nullable = false)
     private String email;
 
-    @Column(nullable = false)
     private String intro;
 
+    private String nickname;
+
+    @Column
     @Enumerated(value = EnumType.STRING)
-    @Column(nullable = false)
-    private StatusEnum status;
+    private Status status;
 
-    @Column(nullable = false)
-    private Date state;
+    @JsonIgnore
+    @CreationTimestamp
+    @Builder.Default
+    @Column(name = "status_at")
+    private LocalDateTime status_at = LocalDateTime.now();
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(nullable = false)
-    private Date created_at;
+    @JsonIgnore
+    @CreationTimestamp
+    @Builder.Default
+    @Column(name = "created_at")
+    private LocalDateTime created_at = LocalDateTime.now();
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(nullable = false)
-    private Date updated_at;
-
-    @Column(nullable = false)
-    private String user_id;
+    @JsonIgnore
+    @UpdateTimestamp
+    @Builder.Default
+    @Column(name = "updated_at")
+    private LocalDateTime updated_at = LocalDateTime.now();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
@@ -51,14 +66,9 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Newsfeed> newsfeeds;
 
-    @PrePersist
-    protected void onCreate() {
-        created_at = new Date();
-        updated_at = new Date();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updated_at = new Date();
+    public void update(UserUpdateRequest req) {
+        this.nickname = req.getNickname();
+        this.intro = req.getIntro();
+        this.password = req.getNewPassword();
     }
 }

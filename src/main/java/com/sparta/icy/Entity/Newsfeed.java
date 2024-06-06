@@ -17,7 +17,7 @@ public class Newsfeed {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "id2", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Column(nullable = false)
@@ -31,7 +31,7 @@ public class Newsfeed {
     @Column(nullable = false)
     private Date updated_at;
 
-    @OneToMany(mappedBy = "feed_id", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "newsfeed", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
 
     @PrePersist
