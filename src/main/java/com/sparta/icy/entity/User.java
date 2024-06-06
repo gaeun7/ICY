@@ -62,6 +62,5 @@ public class User {
         this.nickname = req.getNickname();
         this.intro = req.getIntro();
         this.password = req.getNewPassword();
-
     }
 }
