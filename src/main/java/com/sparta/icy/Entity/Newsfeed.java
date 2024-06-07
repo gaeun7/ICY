@@ -1,5 +1,6 @@
 package com.sparta.icy.Entity;
 
+import com.sparta.icy.Dto.NewsfeedResponseDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -34,4 +35,5 @@ public class Newsfeed {
 
     @OneToMany(mappedBy = "newsfeed", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
+
 }

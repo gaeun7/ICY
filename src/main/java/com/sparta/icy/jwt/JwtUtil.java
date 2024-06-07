@@ -25,8 +25,6 @@ public class JwtUtil {
     public static final String AUTHORIZATION_HEADER = "Authorization";
     // Token 식별자
     public static final String BEARER_PREFIX = "Bearer ";
-    // 토큰 만료시간
-    private final long TOKEN_TIME = 60 * 60 * 1000L; // 60분
 
     @Value("${jwt.secret.key}") // Base64 Encode 한 SecretKey
     private String secretKey;
@@ -43,9 +41,9 @@ public class JwtUtil {
     }
 
     // 토큰 생성
-    public String createToken(String username, Long userId) {
+    public String createToken(String username, Long userId, boolean isAccessToken) {
         Date date = new Date();
-
+        Long TOKEN_TIME = isAccessToken ? 1800000L : 1209600000L;
         return BEARER_PREFIX +
                 Jwts.builder()
                         .claim("username", username) // 사용자 식별자값(ID)

@@ -1,6 +1,6 @@
 package com.sparta.icy.Entity;
 
-import com.sparta.icy.dto.CommentRequestDto;
+import com.sparta.icy.Dto.CommentRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -43,19 +43,5 @@ public class Comment {
         this.created_at = LocalDateTime.now();
         this.updated_at = LocalDateTime.now();
         // this.like = 0L;
-    }
-
-    @PrePersist
-    protected void onCreate() {
-        created_at = LocalDateTime.now();
-        updated_at = LocalDateTime.now();
-//        if (like == null) {
-//            like = 0L;
-//        }
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updated_at = LocalDateTime.now();
     }
 }

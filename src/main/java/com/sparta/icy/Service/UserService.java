@@ -1,11 +1,11 @@
-package com.sparta.icy.service;
+package com.sparta.icy.Service;
 
-import com.sparta.icy.dto.SignupRequestDto;
-import com.sparta.icy.dto.UserProfileResponse;
-import com.sparta.icy.dto.UserUpdateRequest;
+import com.sparta.icy.Dto.SignupRequestDto;
+import com.sparta.icy.Dto.UserProfileResponse;
+import com.sparta.icy.Dto.UserUpdateRequest;
 import com.sparta.icy.Entity.Status;
 import com.sparta.icy.Entity.User;
-import com.sparta.icy.repository.UserRepository;
+import com.sparta.icy.Repository.UserRepository;
 import com.sparta.icy.error.AlreadySignedOutUserCannotBeSignoutAgainException;
 import com.sparta.icy.error.PasswordDoesNotMatchException;
 import com.sparta.icy.jwt.JwtUtil;
@@ -61,29 +61,34 @@ public class UserService {
             return false;
         }
 
-        boolean hasUpperCase = false;
-        boolean hasLowerCase = false;
+        boolean hasAlpha = false;
         boolean hasDigit = false;
         boolean hasSpecialChar = false;
 
         for (char c : password.toCharArray()) {
-            if (Character.isUpperCase(c)) {
-                hasUpperCase = true;
-            } else if (Character.isLowerCase(c)) {
-                hasLowerCase = true;
+            if (Character.isUpperCase(c) || Character.isLowerCase(c)) {
+                hasAlpha = true;
             } else if (Character.isDigit(c)) {
                 hasDigit = true;
             } else if (!Character.isLetterOrDigit(c)) {
                 hasSpecialChar = true;
             }
         }
-        return hasUpperCase && hasLowerCase && hasDigit && hasSpecialChar;
+        return hasAlpha && hasDigit && hasSpecialChar;
     }
 
     public void signup(SignupRequestDto requestDto) {
         String username = requestDto.getUsername();
-        String password = passwordEncoder.encode(requestDto.getPassword());
+        String password = requestDto.getPassword();
 
+        if (!isValidUsername(username)) {
+            throw new IllegalArgumentException("유효하지 않은 username입니다. 영문자와 숫자만 사용할 수 있습니다.");
+        }
+        if (!isValidPassword(password)) {
+            throw new IllegalArgumentException("유효하지 않은 password입니다. 영문자와 숫자, 특수문자를 최소 1글자씩 포함해주세요.");
+        }
+
+        String encodedpassword = passwordEncoder.encode(requestDto.getPassword());
         // 회원 중복 확인
         Optional<User> checkUserOptional = userRepository.findByUsername(username);
         if (checkUserOptional.isPresent()) {
@@ -94,7 +99,7 @@ public class UserService {
             throw new IllegalArgumentException("중복된 사용자가 존재합니다.");
         }
 
-        User user = new User(username, password, requestDto.getEmail(), requestDto.getIntro(), requestDto.getNickname());
+        User user = new User(username, encodedpassword, requestDto.getEmail(), requestDto.getIntro(), requestDto.getNickname());
         userRepository.save(user);
     }
 
@@ -116,6 +121,10 @@ public class UserService {
         userRepository.save(checkUsername); // 변경된 상태를 저장
     }
 
+    private boolean isValidUsername(String username) {
+        String regex = "^[a-zA-Z0-9]+$";
+        return username.matches(regex);
+    }
 }
 
 

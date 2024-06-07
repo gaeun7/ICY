@@ -1,4 +1,4 @@
-package com.sparta.icy.repository;
+package com.sparta.icy.Repository;
 
 import com.sparta.icy.Entity.Comment;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,10 +1,10 @@
 package com.sparta.icy.controller;
 
-import com.sparta.icy.dto.SignupRequestDto;
-import com.sparta.icy.dto.UserProfileResponse;
-import com.sparta.icy.dto.UserUpdateRequest;
+import com.sparta.icy.Dto.SignupRequestDto;
+import com.sparta.icy.Dto.UserProfileResponse;
+import com.sparta.icy.Dto.UserUpdateRequest;
 import com.sparta.icy.Entity.User;
-import com.sparta.icy.service.UserService;
+import com.sparta.icy.Service.UserService;
 import com.sparta.icy.error.AlreadySignedOutUserCannotBeSignoutAgainException;
 import com.sparta.icy.error.PasswordDoesNotMatchException;
 import org.springframework.beans.factory.annotation.Autowired;

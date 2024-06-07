@@ -1,9 +1,8 @@
 package com.sparta.icy.controller;
 
-import com.sparta.icy.dto.CommentRequestDto;
-import com.sparta.icy.dto.CommentResponseDto;
-import com.sparta.icy.service.CommentService;
-import org.springframework.http.HttpStatus;
+import com.sparta.icy.Dto.CommentRequestDto;
+import com.sparta.icy.Dto.CommentResponseDto;
+import com.sparta.icy.Service.CommentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -13,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/boards/comments")
+@RequestMapping("/comment")
 public class CommentController {
     private final CommentService commentService;
 
@@ -21,9 +20,9 @@ public class CommentController {
         this.commentService = commentService;
     }
 
-    @PostMapping
-    public CommentResponseDto writeComment(@RequestBody CommentRequestDto requestDto) {
-        return commentService.writeComment(requestDto);
+    @PostMapping("/{feed_id}")
+    public CommentResponseDto writeComment(@PathVariable Long feed_id, @RequestBody CommentRequestDto requestDto) {
+        return commentService.writeComment(feed_id, requestDto);
     }
 
     @GetMapping("/{feed_id}")
@@ -32,22 +31,13 @@ public class CommentController {
     }
 
     @PutMapping("/{comments_id}")
-    public ResponseEntity<CommentResponseDto> updateComment(@PathVariable Long comments_id, @RequestBody CommentRequestDto requestDto) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long currentUserId = getUserIdFromAuthentication(authentication);
-        CommentResponseDto updatedComment = commentService.updateComment(comments_id, requestDto, currentUserId);
-        if (updatedComment != null) {
-            return new ResponseEntity<>(updatedComment, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public void updateComment(@PathVariable Long comments_id, @RequestBody CommentRequestDto requestDto) {
+        commentService.updateComment(comments_id, requestDto);
     }
 
     @DeleteMapping("/{comments_id}")
-    public ResponseEntity<?> deleteComment(@PathVariable Long comments_id) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long currentUserId = getUserIdFromAuthentication(authentication);
-        return commentService.deleteComment(comments_id, currentUserId);
+    public void deleteComment(@PathVariable Long comments_id) {
+        commentService.deleteComment(comments_id);
     }
 
     private Long getUserIdFromAuthentication(Authentication authentication) {
