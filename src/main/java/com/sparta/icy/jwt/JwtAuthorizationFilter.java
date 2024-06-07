@@ -1,5 +1,6 @@
 package com.sparta.icy.jwt;
 
+import com.sparta.icy.security.UserDetailsImpl;
 import com.sparta.icy.security.UserDetailsServiceImpl;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
@@ -44,9 +45,10 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             }
 
             Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
+            String username = info.get("username", String.class);
 
             try {
-                setAuthentication(info.getSubject());
+                setAuthentication(username);
             } catch (Exception e) {
                 log.error(e.getMessage());
                 return;
@@ -69,5 +71,11 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     private Authentication createAuthentication(String username) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+    }
+
+    public Long getUserIdFromAuthentication() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        return userDetails.getId();
     }
 }

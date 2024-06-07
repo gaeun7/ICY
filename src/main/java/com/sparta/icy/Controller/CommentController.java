@@ -5,6 +5,9 @@ import com.sparta.icy.Dto.CommentResponseDto;
 import com.sparta.icy.Service.CommentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,7 +33,9 @@ public class CommentController {
 
     @PutMapping("/{comments_id}")
     public ResponseEntity<CommentResponseDto> updateComment(@PathVariable Long comments_id, @RequestBody CommentRequestDto requestDto) {
-        CommentResponseDto updatedComment = commentService.updateComment(comments_id, requestDto);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long currentUserId = getUserIdFromAuthentication(authentication);
+        CommentResponseDto updatedComment = commentService.updateComment(comments_id, requestDto, currentUserId);
         if (updatedComment != null) {
             return new ResponseEntity<>(updatedComment, HttpStatus.OK);
         } else {
@@ -40,6 +45,13 @@ public class CommentController {
 
     @DeleteMapping("/{comments_id}")
     public ResponseEntity<?> deleteComment(@PathVariable Long comments_id) {
-        return commentService.deleteComment(comments_id);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long currentUserId = getUserIdFromAuthentication(authentication);
+        return commentService.deleteComment(comments_id, currentUserId);
+    }
+
+    private Long getUserIdFromAuthentication(Authentication authentication) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        return Long.valueOf(userDetails.getUsername());
     }
 }

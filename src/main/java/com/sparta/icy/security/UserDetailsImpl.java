@@ -31,6 +31,10 @@ public class UserDetailsImpl implements UserDetails {
         return user.getUsername();
     }
 
+    public Long getId() {
+        return user.getId();
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Status status = user.getStatus();
