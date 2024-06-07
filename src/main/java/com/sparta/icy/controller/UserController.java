@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.List;
 @Slf4j
 @Controller
-@RequestMapping("/api/users")
+@RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
@@ -33,12 +33,12 @@ public class UserController {
             for (FieldError fieldError : bindingResult.getFieldErrors()) {
                 log.error(fieldError.getField() + " 필드 : " + fieldError.getDefaultMessage());
             }
-            return "redirect:/api/users/sign-up";
+            return "redirect:/users/sign-up";
         }
 
         userService.signup(requestDto);
 
-        return "redirect:/api/users/login";
+        return "redirect:/users/login";
     }
 
     //이 주석은 UserDetailsImpl과 UserDetailsImplService가 구현되면 해제해주세요
