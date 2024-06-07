@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link rel="stylesheet" type="text/css" href="/css/style.css">
+  <title>회원가입 페이지</title>
+</head>
+<body>
+<div id="login-form">
+  <div id="login-title">Sign up Select Shop</div>
+
+  <form id="signup-form" action="/user/signup" method="post">
+    <div class="login-id-label">Username</div>
+    <input type="text" name="username" placeholder="Username" class="login-input-box" required>
+
+    <div class="login-id-label">Password</div>
+    <input type="password" name="password" class="login-input-box" required>
+
+    <div class="login-id-label">E-mail</div>
+    <input type="email" name="email" placeholder="E-mail" class="login-input-box" required>
+
+    <div class="login-id-label">Introduction</div>
+    <input type="text" name="intro" placeholder="intro" class="login-input-box">
+
+    <div class="login-id-label">Nick Name</div>
+    <input type="text" name="nickname" placeholder="nickname" class="login-input-box">
+
+    <button type="submit" id="login-id-submit">회원 가입</button>
+  </form>
+</div>
+
+<script>
+  document.getElementById('signup-form').addEventListener('submit', function (event) {
+    event.preventDefault();
+    const formData = new FormData(this);
+
+    fetch(this.action, {
+      method: 'POST',
+      body: formData,
+    })
+            .then(response => response.text().then(message => ({ status: response.status, message })))
+            .then(({ status, message }) => {
+              if (status === 200) {
+                alert('가입에 성공하였습니다');
+                window.location.href = '/user/login-page';
+              } else {
+                alert(message);
+              }
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              alert('가입에 실패했습니다');
+            });
+  });
+</script>
+</body>
+</html>
