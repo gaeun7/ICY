@@ -13,7 +13,7 @@
 <div id="login-form">
   <div id="login-title">Sign up Select Shop</div>
 
-  <form id="signup-form" action="/api/user/signup" method="post">
+  <form id="signup-form" action="/user/signup" method="post">
     <div class="login-id-label">Username</div>
     <input type="text" name="username" placeholder="Username" class="login-input-box" required>
 
@@ -45,7 +45,7 @@
             .then(response => {
               if (response.ok) {
                 alert('가입에 성공하였습니다');
-                window.location.href = '/api/user/login-page';
+                window.location.href = '/user/login-page';
               } else {
                 alert('가입에 실패했습니다');
               }
