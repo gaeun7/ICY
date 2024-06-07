@@ -1,7 +1,7 @@
-package com.sparta.icy.Entity;
+package com.sparta.icy.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.sparta.icy.Dto.UserUpdateRequest;
+import com.sparta.icy.dto.UserUpdateRequest;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;

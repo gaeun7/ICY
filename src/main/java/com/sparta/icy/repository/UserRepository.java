@@ -1,6 +1,6 @@
-package com.sparta.icy.Repository;
+package com.sparta.icy.repository;
 
-import com.sparta.icy.Entity.User;
+import com.sparta.icy.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

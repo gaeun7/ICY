@@ -1,6 +1,6 @@
-package com.sparta.icy.Repository;
+package com.sparta.icy.repository;
 
-import com.sparta.icy.Entity.Newsfeed;
+import com.sparta.icy.entity.Newsfeed;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

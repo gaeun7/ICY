@@ -1,17 +1,20 @@
-package com.sparta.icy.Service;
+package com.sparta.icy.service;
 
-import com.sparta.icy.Dto.SignupRequestDto;
-import com.sparta.icy.Dto.UserProfileResponse;
-import com.sparta.icy.Dto.UserUpdateRequest;
-import com.sparta.icy.Entity.Status;
-import com.sparta.icy.Entity.User;
-import com.sparta.icy.Repository.UserRepository;
+import com.sparta.icy.dto.SignupRequestDto;
+import com.sparta.icy.dto.UserProfileResponse;
+import com.sparta.icy.dto.UserUpdateRequest;
+import com.sparta.icy.entity.Status;
+import com.sparta.icy.entity.User;
+import com.sparta.icy.repository.UserRepository;
 import com.sparta.icy.error.AlreadySignedOutUserCannotBeSignoutAgainException;
 import com.sparta.icy.error.PasswordDoesNotMatchException;
 import com.sparta.icy.jwt.JwtUtil;
+import com.sparta.icy.security.UserDetailsImpl;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,11 +42,13 @@ public class UserService {
 
     @Transactional
     public User updateUser(long id, UserUpdateRequest req) {
+        User currentUser = getcurrentUser();
+
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 사용자는 존재하지 않습니다."));
 
-        if (!user.getPassword().equals(req.getCurrentPassword())) {
-            throw new IllegalArgumentException("비밀번호가 맞지 않습니다.");
+        if (!passwordEncoder.matches(req.getCurrentPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
 
         if (req.getNewPassword() != null && !isValidPassword(req.getNewPassword())) {
@@ -52,6 +57,10 @@ public class UserService {
 
         if (user.getPassword().equals(req.getNewPassword())) {
             throw new IllegalArgumentException("현재 비밀번호와 동일한 비밀번호로 수정할 수 없습니다.");
+        }
+
+        if (!currentUser.getUsername().equals(user.getUsername())) {
+            throw new IllegalArgumentException("프로필 업데이트 권한이 없습니다.");
         }
 
         user.update(req);
@@ -137,6 +146,23 @@ public class UserService {
         cookie.setHttpOnly(true);
         cookie.setMaxAge(0);
         response.addCookie(cookie);
+    }
+
+    private static User getcurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new IllegalStateException("인증되지 않은 사용자입니다.");
+        }
+
+        // Principal이 UserDetailsImpl 타입인지 확인
+        Object principal = authentication.getPrincipal();
+        if (!(principal instanceof UserDetailsImpl)) {
+            throw new IllegalStateException("사용자 정보를 가져올 수 없습니다.");
+        }
+
+        UserDetailsImpl userDetails = (UserDetailsImpl) principal;
+        User currentUser = userDetails.getUser();
+        return currentUser;
     }
 }
 

@@ -1,6 +1,6 @@
-package com.sparta.icy.Dto;
+package com.sparta.icy.dto;
 
-import com.sparta.icy.Entity.ContentType;
+import com.sparta.icy.entity.ContentType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

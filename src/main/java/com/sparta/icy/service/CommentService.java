@@ -1,22 +1,19 @@
-package com.sparta.icy.Service;
+package com.sparta.icy.service;
 
-import com.sparta.icy.Entity.Newsfeed;
-import com.sparta.icy.Entity.User;
-import com.sparta.icy.Dto.CommentRequestDto;
-import com.sparta.icy.Dto.CommentResponseDto;
-import com.sparta.icy.Entity.Comment;
-import com.sparta.icy.Repository.CommentRepository;
-import com.sparta.icy.Repository.NewsfeedRepository;
+import com.sparta.icy.entity.Newsfeed;
+import com.sparta.icy.entity.User;
+import com.sparta.icy.dto.CommentRequestDto;
+import com.sparta.icy.dto.CommentResponseDto;
+import com.sparta.icy.entity.Comment;
+import com.sparta.icy.repository.CommentRepository;
+import com.sparta.icy.repository.NewsfeedRepository;
 import com.sparta.icy.security.UserDetailsImpl;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service

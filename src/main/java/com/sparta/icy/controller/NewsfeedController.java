@@ -1,8 +1,8 @@
 package com.sparta.icy.controller;
 
-import com.sparta.icy.Dto.NewsfeedDto;
-import com.sparta.icy.Dto.NewsfeedResponseDto;
-import com.sparta.icy.Service.NewsfeedService;
+import com.sparta.icy.dto.NewsfeedDto;
+import com.sparta.icy.dto.NewsfeedResponseDto;
+import com.sparta.icy.service.NewsfeedService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
