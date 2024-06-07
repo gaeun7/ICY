@@ -36,7 +36,7 @@ public class Comment {
     private LocalDateTime updated_at;
 
     @Column(nullable = false)
-    private Long like = 0L;
+    private Long like;
 
     public Comment(CommentRequestDto commentRequestDto) {
         this.content = commentRequestDto.getContent();
