@@ -20,7 +20,7 @@ public class TokenGenerationTest {
 
     @Test
     public void testTokenGeneration() throws Exception {
-        String url = "/api/users/login";
+        String url = "/users/login";
 
         // 로그인 요청에 사용될 사용자 정보 생성
         LoginRequestDto requestDto = new LoginRequestDto();

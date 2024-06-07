@@ -44,6 +44,7 @@ public class SecurityConfig {
 //                                .requestMatchers("/users/register").permitAll() 회원가입 주소
 //                                .requestMatchers("/users/login").permitAll()  로그인 주소
                                 .requestMatchers(HttpMethod.GET).permitAll() // GET 접근 허용
+                                .requestMatchers(HttpMethod.POST).permitAll()
                                 .anyRequest().authenticated() // 모든 요청 인증 처리하기
                 )
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
