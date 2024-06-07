@@ -3,8 +3,10 @@ package com.sparta.icy.config;
 import com.sparta.icy.filter.JwtRequestFilter;
 import com.sparta.icy.service.CustomUserDetailsService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -34,11 +36,15 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        // csrf 설정
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/users/register").permitAll()
-                                .anyRequest().authenticated()
+                                .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // 리소스 접근 허용 설정
+//                                .requestMatchers("/users/register").permitAll() 회원가입 주소
+//                                .requestMatchers("/users/login").permitAll()  로그인 주소
+                                .requestMatchers(HttpMethod.GET).permitAll() // GET 접근 허용
+                                .anyRequest().authenticated() // 모든 요청 인증 처리하기
                 )
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 

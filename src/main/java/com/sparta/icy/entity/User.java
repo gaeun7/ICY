@@ -28,12 +28,16 @@ public class User {
 
     @JsonIgnore
     @Length(min = 10)
+    @Column(nullable = false)
     private String password;
 
+    @Column(nullable = false)
     private String nickname;
 
+    @Column(unique = true, nullable = false) // 중복 x
     private String email;
 
+    @Column(nullable = false)
     private String intro;
 
     @Column
