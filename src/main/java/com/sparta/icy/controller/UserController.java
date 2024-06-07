@@ -4,9 +4,10 @@ import com.sparta.icy.Dto.SignupRequestDto;
 import com.sparta.icy.Dto.UserProfileResponse;
 import com.sparta.icy.Dto.UserUpdateRequest;
 import com.sparta.icy.Entity.User;
-import com.sparta.icy.Service.UserService;
+import com.sparta.icy.service.UserService;
 import com.sparta.icy.error.AlreadySignedOutUserCannotBeSignoutAgainException;
 import com.sparta.icy.error.PasswordDoesNotMatchException;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -71,5 +72,11 @@ public class UserController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(HttpServletResponse response) {
+        userService.logout(response);
+        return ResponseEntity.ok("User logged out successfully");
     }
 }
