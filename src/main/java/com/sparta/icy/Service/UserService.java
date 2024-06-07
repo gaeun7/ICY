@@ -9,6 +9,8 @@ import com.sparta.icy.Repository.UserRepository;
 import com.sparta.icy.error.AlreadySignedOutUserCannotBeSignoutAgainException;
 import com.sparta.icy.error.PasswordDoesNotMatchException;
 import com.sparta.icy.jwt.JwtUtil;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -103,6 +105,7 @@ public class UserService {
         userRepository.save(user);
     }
 
+    @Transactional
     public void signout(String userDetailsUsername, String password) {
         User checkUsername = userRepository.findByUsername(userDetailsUsername)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
@@ -119,11 +122,21 @@ public class UserService {
         //탈퇴한 회원으로 전환
         checkUsername.setStatus(Status.DELETED);
         userRepository.save(checkUsername); // 변경된 상태를 저장
+
+        System.out.println("User status changed to DELETED for username: " + userDetailsUsername);
     }
 
     private boolean isValidUsername(String username) {
         String regex = "^[a-zA-Z0-9]+$";
         return username.matches(regex);
+    }
+
+    public void logout(HttpServletResponse response) {
+        Cookie cookie = new Cookie(JwtUtil.AUTHORIZATION_HEADER, null);
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
     }
 }
 
