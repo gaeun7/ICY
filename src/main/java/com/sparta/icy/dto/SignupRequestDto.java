@@ -1,6 +1,5 @@
-package com.sparta.icy.Dto;
+package com.sparta.icy.dto;
 
-import com.sparta.icy.Entity.Status;
 import lombok.Getter;
 import lombok.Setter;
 

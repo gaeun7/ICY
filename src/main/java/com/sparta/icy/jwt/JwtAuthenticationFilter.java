@@ -1,7 +1,7 @@
 package com.sparta.icy.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sparta.icy.Dto.LoginRequestDto;
+import com.sparta.icy.dto.LoginRequestDto;
 import com.sparta.icy.security.UserDetailsImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

@@ -1,9 +1,9 @@
-package com.sparta.icy.Service;
+package com.sparta.icy.service;
 
-import com.sparta.icy.Dto.CommentRequestDto;
-import com.sparta.icy.Dto.CommentResponseDto;
+import com.sparta.icy.dto.CommentRequestDto;
+import com.sparta.icy.dto.CommentResponseDto;
 import com.sparta.icy.Entity.Comment;
-import com.sparta.icy.Repository.CommentRepository;
+import com.sparta.icy.repository.CommentRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;

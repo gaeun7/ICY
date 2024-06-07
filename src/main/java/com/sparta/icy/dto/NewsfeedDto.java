@@ -1,4 +1,4 @@
-package com.sparta.icy.Dto;
+package com.sparta.icy.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,6 +7,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class CommentRequestDto {
+public class NewsfeedDto {
     private String content;
 }

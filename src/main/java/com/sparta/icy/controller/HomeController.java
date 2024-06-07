@@ -1,4 +1,4 @@
-package com.sparta.icy.Controller;
+package com.sparta.icy.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

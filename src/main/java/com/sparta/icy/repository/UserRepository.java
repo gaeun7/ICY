@@ -1,4 +1,4 @@
-package com.sparta.icy.Repository;
+package com.sparta.icy.repository;
 
 import com.sparta.icy.Entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;

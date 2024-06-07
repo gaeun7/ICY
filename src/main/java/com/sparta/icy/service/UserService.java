@@ -1,16 +1,14 @@
-package com.sparta.icy.Service;
+package com.sparta.icy.service;
 
-import com.sparta.icy.Dto.LoginRequestDto;
-import com.sparta.icy.Dto.SignupRequestDto;
-import com.sparta.icy.Dto.UserProfileResponse;
-import com.sparta.icy.Dto.UserUpdateRequest;
+import com.sparta.icy.dto.SignupRequestDto;
+import com.sparta.icy.dto.UserProfileResponse;
+import com.sparta.icy.dto.UserUpdateRequest;
 import com.sparta.icy.Entity.Status;
 import com.sparta.icy.Entity.User;
-import com.sparta.icy.Repository.UserRepository;
+import com.sparta.icy.repository.UserRepository;
 import com.sparta.icy.error.AlreadySignedOutUserCannotBeSignoutAgainException;
 import com.sparta.icy.error.PasswordDoesNotMatchException;
 import com.sparta.icy.jwt.JwtUtil;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

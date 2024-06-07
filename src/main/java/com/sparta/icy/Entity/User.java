@@ -1,7 +1,7 @@
 package com.sparta.icy.Entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.sparta.icy.Dto.UserUpdateRequest;
+import com.sparta.icy.dto.UserUpdateRequest;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -9,7 +9,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.validator.constraints.Length;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 @Entity
