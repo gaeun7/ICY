@@ -1,10 +1,10 @@
 package com.sparta.icy.service;
 
-import com.sparta.icy.dto.SignupRequestDto;
-import com.sparta.icy.dto.UserProfileResponse;
-import com.sparta.icy.dto.UserUpdateRequest;
-import com.sparta.icy.entity.Status;
-import com.sparta.icy.entity.User;
+import com.sparta.icy.Dto.SignupRequestDto;
+import com.sparta.icy.Dto.UserProfileResponse;
+import com.sparta.icy.Dto.UserUpdateRequest;
+import com.sparta.icy.Entity.Status;
+import com.sparta.icy.Entity.User;
 import com.sparta.icy.repository.UserRepository;
 import com.sparta.icy.error.AlreadySignedOutUserCannotBeSignoutAgainException;
 import com.sparta.icy.error.PasswordDoesNotMatchException;
@@ -37,6 +37,9 @@ public class UserService {
     public UserProfileResponse getUser(long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 사용자는 존재하지 않습니다."));
+        if(user.getStatus() == Status.DELETED){
+            throw new IllegalArgumentException("유효하지 않은 사용자입니다.");
+        }
         return new UserProfileResponse(user.getUsername(), user.getNickname(), user.getIntro(), user.getEmail());
     }
 
@@ -47,6 +50,9 @@ public class UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 사용자는 존재하지 않습니다."));
 
+        if(user.getStatus() == Status.DELETED){
+            throw new IllegalArgumentException("유효하지 않은 사용자입니다.");
+        }
         if (!passwordEncoder.matches(req.getCurrentPassword(), user.getPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }

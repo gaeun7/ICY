@@ -1,4 +1,4 @@
-package com.sparta.icy.entity;
+package com.sparta.icy.Entity;
 
 public enum Status {
     ENROLLED(Authority.ENROLLED),  // 사용자 권한

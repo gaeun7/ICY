@@ -1,4 +1,4 @@
-package com.sparta.icy.entity;
+package com.sparta.icy.Entity;
 
 public enum ContentType {
     NewsFeed, Comment

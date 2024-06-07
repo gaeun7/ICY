@@ -1,7 +1,7 @@
 package com.sparta.icy.security;
 
-import com.sparta.icy.entity.Status;
-import com.sparta.icy.entity.User;
+import com.sparta.icy.Entity.Status;
+import com.sparta.icy.Entity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

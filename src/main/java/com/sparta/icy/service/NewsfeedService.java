@@ -1,9 +1,9 @@
 package com.sparta.icy.service;
 
-import com.sparta.icy.dto.NewsfeedDto;
-import com.sparta.icy.dto.NewsfeedResponseDto;
-import com.sparta.icy.entity.Newsfeed;
-import com.sparta.icy.entity.User;
+import com.sparta.icy.Dto.NewsfeedDto;
+import com.sparta.icy.Dto.NewsfeedResponseDto;
+import com.sparta.icy.Entity.Newsfeed;
+import com.sparta.icy.Entity.User;
 import com.sparta.icy.repository.NewsfeedRepository;
 import com.sparta.icy.security.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;

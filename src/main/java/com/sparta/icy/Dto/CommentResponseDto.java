@@ -1,6 +1,6 @@
-package com.sparta.icy.dto;
+package com.sparta.icy.Dto;
 
-import com.sparta.icy.entity.Comment;
+import com.sparta.icy.Entity.Comment;
 import lombok.Getter;
 
 import java.time.LocalDateTime;

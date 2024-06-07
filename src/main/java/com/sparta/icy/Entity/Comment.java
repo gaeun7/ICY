@@ -1,6 +1,6 @@
-package com.sparta.icy.entity;
+package com.sparta.icy.Entity;
 
-import com.sparta.icy.dto.CommentRequestDto;
+import com.sparta.icy.Dto.CommentRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
