@@ -1,35 +1,77 @@
 package com.sparta.icy.controller;
 
-import com.sparta.icy.dto.*;
+import com.sparta.icy.dto.AuthResponse;
+import com.sparta.icy.dto.LoginRequestDto;
+import com.sparta.icy.dto.UserRequestDto;
+import com.sparta.icy.entity.RefreshToken;
 import com.sparta.icy.entity.User;
+import com.sparta.icy.jwt.JwtUtil;
 import com.sparta.icy.service.AuthService;
-//import com.sparta.icy.service.UserService;
+import com.sparta.icy.service.CustomUserDetailsService;
+import com.sparta.icy.service.RefreshTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
 
-//    @Autowired
-//    private UserService userService;
-    @Autowired
-    private AuthService authService;
 
-//    @Autowired
-//    public UserController(UserService userService) {
-//        this.userService = userService;
-//    }
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @Autowired
+    private CustomUserDetailsService userDetailsService;
+
+    @Autowired
+    private RefreshTokenService refreshTokenService;
+
 
     @PostMapping("/register")
     public ResponseEntity<UserRequestDto> register(@RequestBody UserRequestDto requestDto){
-        return null; //회원가입
+        return null;
     }
 
     @PostMapping("/login")
-    public AuthResponse login(@RequestBody LoginRequestDto requestDto) {
-        return authService.authenticate(requestDto.getUsername(), requestDto.getPassword());
+    public ResponseEntity<?> login(@RequestBody LoginRequestDto requestDto) {
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(requestDto.getUsername(), requestDto.getPassword())
+            );
+        } catch (BadCredentialsException e) {
+            return ResponseEntity.status(401).body("Incorrect username or password");
+        }
+
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(requestDto.getUsername());
+        final String accessToken = jwtUtil.generateToken(userDetails.getUsername(), true);
+        final String refreshTokenString = jwtUtil.generateToken(userDetails.getUsername(), false);
+
+        RefreshToken refreshToken = new RefreshToken();
+        refreshToken.setToken(refreshTokenString);
+        refreshToken.setUser((User) userDetails);
+        refreshToken.setExpiryDate(LocalDateTime.now().plusWeeks(2));
+        refreshTokenService.save(refreshToken);
+
+        return ResponseEntity.ok(new AuthResponse(accessToken, refreshTokenString));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@RequestBody String refreshToken) {
+        refreshTokenService.deleteByToken(refreshToken);
+        return ResponseEntity.ok("Logged out successfully");
     }
 
 //    @GetMapping("/{id}")

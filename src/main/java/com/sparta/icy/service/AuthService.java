@@ -1,7 +1,10 @@
 package com.sparta.icy.service;
 
 import com.sparta.icy.dto.AuthResponse;
+import com.sparta.icy.dto.UserRequestDto;
+import com.sparta.icy.entity.User;
 import com.sparta.icy.jwt.JwtUtil;
+import com.sparta.icy.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,6 +25,10 @@ public class AuthService {
 
     @Autowired
     private JwtUtil jwtUtil;
+
+
+    @Autowired
+    private UserRepository userRepository;
 
     public AuthResponse authenticate(String username, String password) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
@@ -45,5 +52,13 @@ public class AuthService {
         final String newRefreshToken = jwtUtil.generateToken(username, false);
 
         return new AuthResponse(newAccessToken, newRefreshToken);
+    }
+
+    public User registerUser(UserRequestDto requestDto) {
+        User user = new User();
+        user.setUsername(requestDto.getUsername());
+//        user.setPassword(passwordEncoder.encode(requestDto.getPassword())); 비번 암호화 해야함.
+        user.setEmail(requestDto.getEmail());
+        return userRepository.save(user);
     }
 }
