@@ -92,23 +92,6 @@ public class UserService {
         User user = new User(username, password, requestDto.getEmail(), requestDto.getIntro(), requestDto.getNickname());
         userRepository.save(user);
     }
-
-    public void login(LoginRequestDto requestDto, HttpServletResponse response) {
-        String username = requestDto.getUsername();
-        String password = requestDto.getPassword();
-
-        Optional<User> checkuser = userRepository.findByUsername(username);
-        if (checkuser.isEmpty()) {
-            throw new IllegalArgumentException("등록된 사용자가 없습니다.");
-        }
-
-        User user = checkuser.get();
-        if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
-        }
-        String token = jwtUtil.createToken(username);
-        jwtUtil.addJwtToCookie(token, response);
-    }
 }
 
 

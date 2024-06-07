@@ -14,7 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("/api/users")
+@RequestMapping("/api/user")
 public class UserController {
 
     private final UserService userService;
@@ -46,7 +46,7 @@ public class UserController {
 
     @GetMapping("/login-success")
     public String mainPage() {
-        return "mainpage";
+        return "index";
     }
 
     @PostMapping("/signup")
@@ -57,16 +57,5 @@ public class UserController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Registration failed");
         }
-    }
-
-    @PostMapping("/login")
-    public String login(LoginRequestDto requestDto, HttpServletResponse response){
-        System.out.println("login test");
-        try {
-            userService.login(requestDto, response);
-        } catch (Exception e) {
-            return "redirect:api/users/login-page?error=1";
-        }
-        return "mainpage";
     }
 }
