@@ -4,8 +4,11 @@ import com.sparta.icy.Dto.LoginRequestDto;
 import com.sparta.icy.Dto.SignupRequestDto;
 import com.sparta.icy.Dto.UserProfileResponse;
 import com.sparta.icy.Dto.UserUpdateRequest;
+import com.sparta.icy.Entity.Status;
 import com.sparta.icy.Entity.User;
 import com.sparta.icy.Repository.UserRepository;
+import com.sparta.icy.error.AlreadySignedOutUserCannotBeSignoutAgainException;
+import com.sparta.icy.error.PasswordDoesNotMatchException;
 import com.sparta.icy.jwt.JwtUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,14 +87,37 @@ public class UserService {
         String password = passwordEncoder.encode(requestDto.getPassword());
 
         // 회원 중복 확인
-        Optional<User> checkuser = userRepository.findByUsername(username);
-        if (checkuser.isPresent()) {
+        Optional<User> checkUserOptional = userRepository.findByUsername(username);
+        if (checkUserOptional.isPresent()) {
+            User checkUser = checkUserOptional.get();
+            if (checkUser.getStatus() == Status.DELETED) {
+                throw new IllegalArgumentException("탈퇴한 아이디로 재가입이 불가합니다.");
+            }
             throw new IllegalArgumentException("중복된 사용자가 존재합니다.");
         }
 
         User user = new User(username, password, requestDto.getEmail(), requestDto.getIntro(), requestDto.getNickname());
         userRepository.save(user);
     }
+
+    public void signout(String userDetailsUsername, String password) {
+        User checkUsername = userRepository.findByUsername(userDetailsUsername)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        //이미 탈퇴한 회원이라서 재탈퇴 못함
+        if (checkUsername.getStatus() == Status.DELETED) {
+            throw new AlreadySignedOutUserCannotBeSignoutAgainException("이미 탈퇴한 회원입니다.");
+        }
+
+        if (!passwordEncoder.matches(password, checkUsername.getPassword())) {
+            throw new PasswordDoesNotMatchException("기존 비밀번호와 일치하지 않지 않습니다.");
+        }
+
+        //탈퇴한 회원으로 전환
+        checkUsername.setStatus(Status.DELETED);
+        userRepository.save(checkUsername); // 변경된 상태를 저장
+    }
+
 }
 
 

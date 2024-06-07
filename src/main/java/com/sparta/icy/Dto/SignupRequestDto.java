@@ -12,5 +12,4 @@ public class SignupRequestDto {
     private String email;
     private String intro;
     private String nickname;
-    private Status status;
 }
