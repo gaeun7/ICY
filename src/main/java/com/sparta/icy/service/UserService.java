@@ -37,7 +37,7 @@ public class UserService {
     public UserProfileResponse getUser(long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 사용자는 존재하지 않습니다."));
-        if(user.getStatus() == UserStatus.SECESSION){
+        if(user.getStatus().equals(UserStatus.SECESSION.getStatus())){
             throw new IllegalArgumentException("유효하지 않은 사용자입니다.");
         }
         return new UserProfileResponse(user.getUsername(), user.getNickname(), user.getIntro(), user.getEmail());
@@ -50,7 +50,7 @@ public class UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 사용자는 존재하지 않습니다."));
 
-        if(user.getStatus() == UserStatus.SECESSION){
+        if(user.getStatus().equals(UserStatus.SECESSION.getStatus())){
             throw new IllegalArgumentException("유효하지 않은 사용자입니다.");
         }
         if (!passwordEncoder.matches(req.getCurrentPassword(), user.getPassword())) {
@@ -112,7 +112,6 @@ public class UserService {
         //회원 상태 등록
         UserStatus status=UserStatus.IN_ACTION;
 
-
         // 사용자 등록
         //String username, String nickname, String password, String email, String intro, UserStatus status
         User user = new User(username, requestDto.getNickname(), password, requestDto.getEmail(), requestDto.getIntro(), status);
@@ -125,7 +124,7 @@ public class UserService {
 
 
             //이미 탈퇴한 회원이라서 재탈퇴 못함
-            if(checkUsername.getStatus()==UserStatus.SECESSION){
+            if(checkUsername.getStatus().equals(UserStatus.SECESSION.getStatus())){
                 throw new AlreadySignedOutUserCannotBeSignoutAgainException("이미 탈퇴한 회원은 재탈퇴가 불가능");
 
             }
@@ -137,7 +136,7 @@ public class UserService {
             }
 
             //탈퇴한 회원으로 전환
-            checkUsername.setStatus(UserStatus.SECESSION);
+            checkUsername.setStatus(UserStatus.SECESSION.getStatus());
             userRepository.save(checkUsername); // 변경된 상태를 저장
             return true;
 

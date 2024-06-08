@@ -37,8 +37,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        UserStatus userStatus = user.getUserStatus();
-        String status1 = userStatus.getStatus();
+        String status1 = user.getStatus();
 
         SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(status1);
         Collection<GrantedAuthority> authorities = new ArrayList<>();

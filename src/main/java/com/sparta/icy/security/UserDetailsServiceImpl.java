@@ -23,7 +23,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Not Found " + username));
 
-        if (user.getUserStatus() == UserStatus.DELETED) {
+        if (user.getStatus().equals(UserStatus.SECESSION.getStatus())) {
             throw new DisabledException("탈퇴한 사용자입니다.");
         }
 

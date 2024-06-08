@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor
 @Slf4j
@@ -55,19 +55,19 @@ public class UserController {
 
 
     @PostMapping("/sign-up")
-    public String signup(@Valid SignupRequestDto requestDto, BindingResult bindingResult) {
+    public String signup(@Valid @RequestBody SignupRequestDto requestDto, BindingResult bindingResult) {
         // Validation 예외처리
         List<FieldError> fieldErrors = bindingResult.getFieldErrors();
         if(fieldErrors.size() > 0) {
             for (FieldError fieldError : bindingResult.getFieldErrors()) {
                 log.error(fieldError.getField() + " 필드 : " + fieldError.getDefaultMessage());
             }
-            return "redirect:/sign-up";
+            return "회원 가입 실패";
         }
 
         userService.signup(requestDto);
 
-        return "redirect:/login-page";
+        return "회원가입 성공";
     }
 
 
@@ -77,10 +77,10 @@ public class UserController {
        boolean result= userService.signout(user.getUsername(), password);
        //탈퇴 실패
       if(!result){
-          return "redirect:/sign-out";
+          return "탈퇴 실패";
       }
        //탈퇴 성공
-        return "redirect:/sign-in";
+        return "탈퇴 성공";
     }
 
 

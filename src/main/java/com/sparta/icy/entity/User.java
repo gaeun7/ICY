@@ -1,14 +1,11 @@
 package com.sparta.icy.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sparta.icy.dto.UserUpdateRequest;
 import jakarta.persistence.*;
-import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-import org.hibernate.validator.constraints.Length;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -37,7 +34,7 @@ public class User extends TimeStamped {
 
     @Setter
     @Column(nullable = false)
-    private UserStatus status;
+    private String status;
 
     public User(String username, String nickname, String password, String email, String intro, UserStatus status) {
         this.username = username;
@@ -45,7 +42,7 @@ public class User extends TimeStamped {
         this.password = password;
         this.email = email;
         this.intro = intro;
-        this.status = status;
+        this.status = status.getStatus();
     }
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
