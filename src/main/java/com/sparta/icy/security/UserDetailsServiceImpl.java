@@ -1,7 +1,7 @@
 package com.sparta.icy.security;
 
-import com.sparta.icy.Entity.Status;
-import com.sparta.icy.Entity.User;
+import com.sparta.icy.entity.UserStatus;
+import com.sparta.icy.entity.User;
 import com.sparta.icy.repository.UserRepository;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,7 +23,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Not Found " + username));
 
-        if (user.getStatus() == Status.DELETED) {
+        if (user.getUserStatus() == UserStatus.DELETED) {
             throw new DisabledException("탈퇴한 사용자입니다.");
         }
 

@@ -42,9 +42,9 @@
       method: 'POST',
       body: formData,
     })
-            .then(response => response.text().then(message => ({ status: response.status, message })))
-            .then(({ status, message }) => {
-              if (status === 200) {
+            .then(response => response.text().then(message => ({ userStatus: response.userStatus, message })))
+            .then(({ userStatus, message }) => {
+              if (userStatus === 200) {
                 alert('가입에 성공하였습니다');
                 window.location.href = '/user/login-page';
               } else {

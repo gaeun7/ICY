@@ -58,11 +58,11 @@
             contentType: "application/json",
             data: JSON.stringify({username: username, password: password}),
         })
-            .done(function (res, status, xhr) {
+            .done(function (res, userStatus, xhr) {
                 window.location.href = host;
             })
             .fail(function (xhr, textStatus, errorThrown) {
-                console.log('statusCode: ' + xhr.status);
+                console.log('statusCode: ' + xhr.userStatus);
                 window.location.href = host + '/user/login-page?error'
             });
     }

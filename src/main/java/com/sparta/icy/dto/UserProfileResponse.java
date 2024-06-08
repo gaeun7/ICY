@@ -1,4 +1,4 @@
-package com.sparta.icy.Dto;
+package com.sparta.icy.dto;
 
 import lombok.Getter;
 import lombok.Setter;

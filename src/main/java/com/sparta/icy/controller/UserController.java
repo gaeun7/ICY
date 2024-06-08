@@ -1,29 +1,36 @@
 package com.sparta.icy.controller;
 
-import com.sparta.icy.Dto.SignupRequestDto;
-import com.sparta.icy.Dto.UserProfileResponse;
-import com.sparta.icy.Dto.UserUpdateRequest;
-import com.sparta.icy.Entity.User;
+import com.sparta.icy.dto.SignupRequestDto;
+import com.sparta.icy.dto.UserProfileResponse;
+import com.sparta.icy.dto.UserUpdateRequest;
+import com.sparta.icy.entity.User;
+import com.sparta.icy.security.UserDetailsImpl;
 import com.sparta.icy.service.UserService;
 import com.sparta.icy.error.AlreadySignedOutUserCannotBeSignoutAgainException;
 import com.sparta.icy.error.PasswordDoesNotMatchException;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/user")
+@RequiredArgsConstructor
+@Slf4j
 public class UserController {
 
     private final UserService userService;
 
-    @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
 
     @GetMapping("/{id}")
     public ResponseEntity<UserProfileResponse> getUser(@PathVariable long id) {
@@ -40,39 +47,42 @@ public class UserController {
         return "login";
     }
 
-    @GetMapping("/signup")
-    public String signupPage() {
-        return "signup";
-    }
 
     @GetMapping("/login-success")
     public String mainPage() {
         return "index";
     }
 
-    @PostMapping("/signup")
-    public ResponseEntity<String> signup(@ModelAttribute SignupRequestDto requestDto) {
-        try {
-            userService.signup(requestDto);
-            return ResponseEntity.ok("User registered successfully");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error occurred");
+
+    @PostMapping("/sign-up")
+    public String signup(@Valid SignupRequestDto requestDto, BindingResult bindingResult) {
+        // Validation 예외처리
+        List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+        if(fieldErrors.size() > 0) {
+            for (FieldError fieldError : bindingResult.getFieldErrors()) {
+                log.error(fieldError.getField() + " 필드 : " + fieldError.getDefaultMessage());
+            }
+            return "redirect:/sign-up";
         }
+
+        userService.signup(requestDto);
+
+        return "redirect:/login-page";
     }
 
-    @PostMapping("/signout")
-    public ResponseEntity<String> signout(@RequestParam String username, @RequestParam String password) {
-        try {
-            userService.signout(username, password);
-            return ResponseEntity.ok("User signed out successfully");
-        } catch (PasswordDoesNotMatchException | AlreadySignedOutUserCannotBeSignoutAgainException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+
+    @PatchMapping("/sign-out")
+    public String signout(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody String password) {
+        User user=userDetails.getUser();
+       boolean result= userService.signout(user.getUsername(), password);
+       //탈퇴 실패
+      if(!result){
+          return "redirect:/sign-out";
+      }
+       //탈퇴 성공
+        return "redirect:/sign-in";
     }
+
 
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpServletResponse response) {
