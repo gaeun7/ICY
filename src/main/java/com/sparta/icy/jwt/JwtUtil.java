@@ -115,4 +115,15 @@ public class JwtUtil {
         }
         return null;
     }
+
+    // HttpServletRequest에서 username 추출하는 메서드
+    public String getUsernameFromRequest(HttpServletRequest request) {
+        String token = getTokenFromRequest(request);
+        if (token != null && token.startsWith(BEARER_PREFIX)) {
+            String tokenWithoutPrefix = token.substring(BEARER_PREFIX.length());
+            Claims claims = getUserInfoFromToken(tokenWithoutPrefix);
+            return claims.get("username", String.class);
+        }
+        return null;
+    }
 }
