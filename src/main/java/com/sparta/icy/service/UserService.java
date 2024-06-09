@@ -12,6 +12,7 @@ import com.sparta.icy.error.AlreadySignedOutUserCannotBeSignoutAgainException;
 import com.sparta.icy.error.PasswordDoesNotMatchException;
 import com.sparta.icy.jwt.JwtUtil;
 import com.sparta.icy.security.UserDetailsImpl;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -103,11 +104,6 @@ public class UserService {
             throw new DuplicateUsernameException("중복된 사용자가 존재합니다.");
         }
 
-        //탈퇴한 회원인지 확인
-        User checkUser = userRepository.findByUsername(username).orElseThrow();
-        if(checkUser.getStatus()==UserStatus.SECESSION){
-            throw new ResignupWithSignedoutUsernameException("탈퇴한 아이디로 재가입이 불가합니다.");
-        }
 
         //회원 상태 등록
         UserStatus status=UserStatus.IN_ACTION;
