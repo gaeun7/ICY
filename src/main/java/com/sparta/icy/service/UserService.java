@@ -12,6 +12,7 @@ import com.sparta.icy.error.AlreadySignedOutUserCannotBeSignoutAgainException;
 import com.sparta.icy.error.PasswordDoesNotMatchException;
 import com.sparta.icy.jwt.JwtUtil;
 import com.sparta.icy.security.UserDetailsImpl;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
