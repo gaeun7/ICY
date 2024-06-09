@@ -16,19 +16,14 @@ public class User extends TimeStamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @Column(nullable = false, unique = true)
     private String username;
-
     @Column(nullable = false, unique = true)
     private String nickname;
-
     @Column(nullable = false)
     private String password;
-
     @Column(nullable = false, unique = true)
     private String email;
-
     @Column(nullable = false)
     private String intro;
 
@@ -47,10 +42,8 @@ public class User extends TimeStamped {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
-
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Newsfeed> newsfeeds;
-
     public void update(UserUpdateRequest req) {
         this.nickname = req.getNickname();
         this.intro = req.getIntro();

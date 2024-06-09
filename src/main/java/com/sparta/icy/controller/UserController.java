@@ -20,7 +20,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -28,26 +27,19 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class UserController {
-
     private final UserService userService;
-
-
     @GetMapping("/{id}")
     public ResponseEntity<UserProfileResponse> getUser(@PathVariable long id) {
         return ResponseEntity.ok(userService.getUser(id));
     }
-
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable long id, @RequestBody UserUpdateRequest req) {
         return ResponseEntity.ok(userService.updateUser(id, req));
     }
-
     @GetMapping("/login-page")
     public String loginPage() {
         return "login";
     }
-
-
     @GetMapping("/login-success")
     public String mainPage() {
         return "index";
@@ -64,25 +56,22 @@ public class UserController {
             }
             return "회원 가입 실패";
         }
-
         userService.signup(requestDto);
 
         return "회원가입 성공";
     }
 
-
     @PatchMapping("/sign-out")
     public String signout(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody String password) {
         User user=userDetails.getUser();
-       boolean result= userService.signout(user.getUsername(), password);
-       //탈퇴 실패
-      if(!result){
-          return "탈퇴 실패";
-      }
-       //탈퇴 성공
+        boolean result= userService.signout(user.getUsername(), password);
+        //탈퇴 실패
+        if(!result){
+            return "탈퇴 실패";
+        }
+        //탈퇴 성공
         return "탈퇴 성공";
     }
-
 
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpServletResponse response) {

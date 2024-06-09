@@ -6,6 +6,7 @@ import com.sparta.icy.jwt.JwtUtil;
 import com.sparta.icy.security.UserDetailsServiceImpl;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -14,9 +15,12 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.stereotype.Service;
 
+@Service
 @Configuration
 @EnableWebSecurity // Spring Security 지원을 가능하게 함
+@ComponentScan(basePackages = ("com.sparta"))
 public class WebSecurityConfig {
 
     private final JwtUtil jwtUtil;
