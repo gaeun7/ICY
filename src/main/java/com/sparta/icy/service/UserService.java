@@ -1,5 +1,9 @@
 package com.sparta.icy.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.icy.dto.SignupRequestDto;
 import com.sparta.icy.dto.UserProfileResponse;
 import com.sparta.icy.dto.UserUpdateRequest;
@@ -64,6 +68,7 @@ public class UserService {
         if (!currentUser.getUsername().equals(user.getUsername())) {
             throw new IllegalArgumentException("프로필 업데이트 권한이 없습니다.");
         }
+        req.setNewPassword(passwordEncoder.encode(req.getNewPassword()));
         user.update(req);
         return userRepository.save(user);
     }
@@ -108,14 +113,20 @@ public class UserService {
     public boolean signout(String userDetailsUsername, String password) {
         try {
             User checkUsername = userRepository.findByUsername(userDetailsUsername).orElseThrow();
-
             //이미 탈퇴한 회원이라서 재탈퇴 못함
+            System.out.println(passwordEncoder.encode(password));
+            System.out.println(checkUsername.getPassword());
             if (checkUsername.getStatus().equals(UserStatus.SECESSION.getStatus())) {
                 throw new AlreadySignedOutUserCannotBeSignoutAgainException("이미 탈퇴한 회원은 재탈퇴가 불가능");
 
             }
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonNode = objectMapper.readTree(password);
+
+            String extractedpw = jsonNode.get("password").asText();
+
             //사용자가 입력한 비밀번호가 현재 로그인된 비밀번호와 맞는지 확인
-            if (!checkUsername.getPassword().equals(password)) {
+            if (!passwordEncoder.matches(extractedpw, checkUsername.getPassword())) {
                 throw new PasswordDoesNotMatchException("기존 비밀번호와 일치하지 않음");
             }
 
@@ -128,6 +139,10 @@ public class UserService {
             // 예외 발생 시 로그를 남기고 false 반환
             log.error(e.getMessage(), e);
             return false;
+        } catch (JsonMappingException e) {
+            throw new RuntimeException(e);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
         }
     }
 

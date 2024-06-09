@@ -1,5 +1,4 @@
 package com.sparta.icy.controller;
-
 import com.sparta.icy.dto.SignupRequestDto;
 import com.sparta.icy.dto.UserProfileResponse;
 import com.sparta.icy.dto.UserUpdateRequest;
@@ -21,7 +20,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-
 @RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor
@@ -57,10 +55,8 @@ public class UserController {
             return "회원 가입 실패";
         }
         userService.signup(requestDto);
-
         return "회원가입 성공";
     }
-
     @PatchMapping("/sign-out")
     public String signout(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody String password) {
         User user=userDetails.getUser();
@@ -72,7 +68,6 @@ public class UserController {
         //탈퇴 성공
         return "탈퇴 성공";
     }
-
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpServletResponse response) {
         userService.logout(response);
