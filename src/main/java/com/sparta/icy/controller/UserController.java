@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/users")
 @RequiredArgsConstructor
 @Slf4j
 public class UserController {
@@ -31,7 +31,7 @@ public class UserController {
         return ResponseEntity.ok(userService.getUser(id));
     }
 
-    @PostMapping("/sign-up")
+    @PostMapping("/signup")
     public String signup(@Valid @RequestBody SignupRequestDto requestDto, BindingResult bindingResult) {
         // Validation 예외처리
         List<FieldError> fieldErrors = bindingResult.getFieldErrors();
@@ -47,7 +47,7 @@ public class UserController {
     }
 
 
-    @PatchMapping("/sign-out")
+    @PatchMapping("/signOut")
     public String signout(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody SignoutRequestDto signoutRequestDto) {
         User user=userDetails.getUser();
         boolean result= userService.signout(user.getUsername(), signoutRequestDto);

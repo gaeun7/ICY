@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/log")
+@RequestMapping("/logs")
 @RequiredArgsConstructor
 public class LogController {
 
@@ -34,7 +34,7 @@ public class LogController {
         return ResponseEntity.ok("로그아웃되었습니다.");
     }
 
-    @PostMapping("/add-login-log")
+    @PostMapping("/addLoginLog")
     public ResponseEntity<String> addLoginLog(@RequestBody String username) {
         logService.addLog(username, "로그인"); // 로그인 로그 추가
         return ResponseEntity.ok("로그 추가 완료");

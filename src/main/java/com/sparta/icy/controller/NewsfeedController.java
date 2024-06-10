@@ -32,15 +32,15 @@ public class NewsfeedController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @PutMapping("/{feed_id}")
-    public void updateNewsfeed(@PathVariable Long feed_id, @RequestBody NewsfeedDto newsfeedDto) {
-        newsfeedService.updateNewsfeed(feed_id, newsfeedDto);
+    @PutMapping("/{feedId}")
+    public void updateNewsfeed(@PathVariable Long feedId, @RequestBody NewsfeedDto newsfeedDto) {
+        newsfeedService.updateNewsfeed(feedId, newsfeedDto);
     }
 
     @PreAuthorize("isAuthenticated()")
-    @DeleteMapping("/{feed_id}")
-    public void deleteNewsfeed(@PathVariable Long feed_id) {
-        newsfeedService.deleteNewsfeed(feed_id);
+    @DeleteMapping("/{feedId}")
+    public void deleteNewsfeed(@PathVariable Long feedId) {
+        newsfeedService.deleteNewsfeed(feedId);
     }
 
     @GetMapping

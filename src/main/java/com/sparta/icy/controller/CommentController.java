@@ -16,24 +16,24 @@ public class CommentController {
         this.commentService = commentService;
     }
 
-    @PostMapping("/{feed_id}")
-    public CommentResponseDto writeComment(@PathVariable Long feed_id, @RequestBody CommentRequestDto requestDto) {
-        return commentService.writeComment(feed_id, requestDto);
+    @PostMapping("/{feedId}")
+    public CommentResponseDto writeComment(@PathVariable Long feedId, @RequestBody CommentRequestDto requestDto) {
+        return commentService.writeComment(feedId, requestDto);
     }
 
-    @GetMapping("/{feed_id}")
-    public List<CommentResponseDto> getComments(@PathVariable Long feed_id) {
-        return commentService.getComments(feed_id);
+    @GetMapping("/{feedId}")
+    public List<CommentResponseDto> getComments(@PathVariable Long feedId) {
+        return commentService.getComments(feedId);
     }
 
-    @PutMapping("/{comment_id}")
-    public void updateComment(@PathVariable Long comments_id, @RequestBody CommentRequestDto requestDto) {
-        commentService.updateComment(comments_id, requestDto);
+    @PutMapping("/{commentId}")
+    public void updateComment(@PathVariable Long commentId, @RequestBody CommentRequestDto requestDto) {
+        commentService.updateComment(commentId, requestDto);
     }
 
-    @DeleteMapping("/{comment_id}")
-    public void deleteComment(@PathVariable Long comments_id) {
-        commentService.deleteComment(comments_id);
+    @DeleteMapping("/{commentId}")
+    public void deleteComment(@PathVariable Long commentId) {
+        commentService.deleteComment(commentId);
     }
 
 }
