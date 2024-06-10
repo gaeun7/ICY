@@ -3,6 +3,7 @@ package com.sparta.icy.jwt;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.icy.dto.LoginRequestDto;
 import com.sparta.icy.security.UserDetailsImpl;
+import com.sparta.icy.controller.LogController;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,10 +19,12 @@ import java.io.IOException;
 @Slf4j(topic = "로그인 및 JWT 생성")
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final JwtUtil jwtUtil;
+    private final LogController logController;
 
-    public JwtAuthenticationFilter(JwtUtil jwtUtil) {
+    public JwtAuthenticationFilter(JwtUtil jwtUtil, LogController logController) { // LogController를 생성자에 추가
         this.jwtUtil = jwtUtil;
-        setFilterProcessesUrl("/log/login"); // 로그인 URL 수정
+        this.logController = logController;
+        setFilterProcessesUrl("/user/login");
     }
 
     @Override
@@ -47,19 +50,18 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         log.info("로그인 성공 및 JWT 생성");
         String username = ((UserDetailsImpl) authResult.getPrincipal()).getUsername();
+        Long userId = ((UserDetailsImpl) authResult.getPrincipal()).getId();
 
-        String token = jwtUtil.createToken(username, null, true);
-
+        String token = jwtUtil.createToken(username, userId, true);
         jwtUtil.addJwtToCookie(token, response);
-        response.getWriter().write("로그인에 성공하였습니다.");
-        response.getWriter().flush();
+
+        // 로그 추가
+        logController.addLoginLog(username);
     }
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
         log.info("로그인 실패");
         response.setStatus(401);
-        response.getWriter().write("로그인에 실패하였습니다.");
-        response.getWriter().flush();
     }
 }
