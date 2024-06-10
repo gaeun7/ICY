@@ -23,6 +23,8 @@ import java.util.Date;
 public class JwtUtil {
     // Header KEY 값
     public static final String AUTHORIZATION_HEADER = "Authorization";
+    // Header KEY Refresh
+    public static final String REFRESH_TOKEN_HEADER = "RefreshToken";
     // Token 식별자
     public static final String BEARER_PREFIX = "Bearer ";
 
@@ -131,7 +133,7 @@ public class JwtUtil {
         try {
             refreshToken = URLEncoder.encode(refreshToken, "utf-8").replaceAll("\\+", "%20");
 
-            Cookie cookie = new Cookie("refreshToken", refreshToken); // Name-Value
+            Cookie cookie = new Cookie(REFRESH_TOKEN_HEADER, refreshToken); // Name-Value
             cookie.setPath("/");
 
             // Response 객체에 Cookie 추가

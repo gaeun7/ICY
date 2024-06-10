@@ -66,9 +66,14 @@ public class LogService {
 
     public void logout(HttpServletResponse response) {
         Cookie cookie = new Cookie(JwtUtil.AUTHORIZATION_HEADER, null);
+        Cookie refreshCookie = new Cookie(JwtUtil.REFRESH_TOKEN_HEADER, null);
+
+        refreshCookie.setHttpOnly(true);
+        refreshCookie.setMaxAge(0);
         cookie.setHttpOnly(true);
         cookie.setMaxAge(0);
         response.addCookie(cookie);
+        response.addCookie(refreshCookie);
     }
 
     public void addLoginLog(String username) {
