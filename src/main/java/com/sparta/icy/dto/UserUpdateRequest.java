@@ -12,6 +12,4 @@ public class UserUpdateRequest {
     private String intro;
     private String currentPassword;
     private String newPassword;
-
-
 }

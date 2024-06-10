@@ -21,13 +21,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
-
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/user")
+@RequiredArgsConstructor
+@Slf4j
 public class UserController {
-
-
-    @Autowired
+    private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
+   @Autowired
     private AuthenticationManager authenticationManager;
 
     @Autowired
@@ -45,43 +46,61 @@ public class UserController {
         return null;
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequestDto requestDto) {
-        try {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(requestDto.getUsername(), requestDto.getPassword())
-            );
-        } catch (BadCredentialsException e) {
-            return ResponseEntity.status(401).body("Incorrect username or password");
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UserProfileResponse> getUser(@PathVariable long id) {
+        return ResponseEntity.ok(userService.getUser(id));
+    }
+
+    @PostMapping("/sign-up")
+    public String signup(@Valid @RequestBody SignupRequestDto requestDto, BindingResult bindingResult) {
+        // Validation 예외처리
+        List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+        if(fieldErrors.size() > 0) {
+            for (FieldError fieldError : bindingResult.getFieldErrors()) {
+                log.error(fieldError.getField() + " 필드 : " + fieldError.getDefaultMessage());
+            }
+            return "회원 가입 실패";
         }
+        userService.signup(requestDto);
 
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(requestDto.getUsername());
-        final String accessToken = jwtUtil.generateToken(userDetails.getUsername(), true);
-        final String refreshTokenString = jwtUtil.generateToken(userDetails.getUsername(), false);
-
-        RefreshToken refreshToken = new RefreshToken();
-        refreshToken.setToken(refreshTokenString);
-        refreshToken.setUser((User) userDetails);
-        refreshToken.setExpiryDate(LocalDateTime.now().plusWeeks(2));
-        refreshTokenService.save(refreshToken);
-
-        return ResponseEntity.ok(new AuthResponse(accessToken, refreshTokenString));
+        return "회원가입 성공";
     }
 
-    @PostMapping("/logout")
-    public ResponseEntity<?> logout(@RequestBody String refreshToken) {
-        refreshTokenService.deleteByToken(refreshToken);
-        return ResponseEntity.ok("Logged out successfully");
+
+    @PatchMapping("/sign-out")
+    public String signout(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody SignoutRequestDto signoutRequestDto) {
+        User user=userDetails.getUser();
+        boolean result= userService.signout(user.getUsername(), signoutRequestDto);
+        //탈퇴 실패
+        if(!result){
+            return "탈퇴 실패";
+        }
+        //탈퇴 성공
+        return "탈퇴 성공";
     }
 
-//    @GetMapping("/{id}")
-//    public ResponseEntity<UserProfileResponse> getUser(@PathVariable long id) {
-//        return ResponseEntity.ok(userService.getUser(id)); //프로필 조회
-//    }
-//
-//    @PutMapping("/{id}")
-//    public ResponseEntity<User> updateUser(@PathVariable long id, @RequestBody UserUpdateRequest req) {
-//        return ResponseEntity.ok(userService.updateUser(id, req)); //프로필 수정
-//    }
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody LoginRequestDto requestDto, HttpServletResponse response) {
+        // 사용자 인증
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(requestDto.getUsername(), requestDto.getPassword())
+        );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        // JWT 토큰 생성
+        String token = jwtUtil.createToken(requestDto.getUsername(), null, true);
+        jwtUtil.addJwtToCookie(token, response);
+
+        // 로그 추가
+        logService.addLoginLog(requestDto.getUsername());
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable long id, @RequestBody UserUpdateRequest req) {
+        User updatedUser = userService.updateUser(id, req);
+        return ResponseEntity.ok(updatedUser);
+    }
+
 
 }
