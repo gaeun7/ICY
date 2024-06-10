@@ -21,6 +21,7 @@ public class LogService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
+    private final RefreshTokenService refreshTokenService;
 
     public void addLog(String username, String action) {
         Log log = new Log(username, action);
@@ -38,6 +39,10 @@ public class LogService {
 
         // 토큰 생성
         String token = jwtUtil.createToken(dto.getUsername(), true);
+
+        // 리프레시 토큰 생성
+        refreshTokenService.createRefreshToken(user);
+
         jwtUtil.addJwtToCookie(token, res);
 
         return token;
