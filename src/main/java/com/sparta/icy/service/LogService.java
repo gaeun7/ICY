@@ -2,6 +2,7 @@ package com.sparta.icy.service;
 
 import com.sparta.icy.dto.LoginRequestDto;
 import com.sparta.icy.entity.Log;
+import com.sparta.icy.entity.RefreshToken;
 import com.sparta.icy.entity.User;
 import com.sparta.icy.error.PasswordDoesNotMatchException;
 import com.sparta.icy.jwt.JwtUtil;
@@ -13,6 +14,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -40,8 +44,17 @@ public class LogService {
         // 토큰 생성
         String token = jwtUtil.createToken(dto.getUsername(), true);
 
-        // 리프레시 토큰 생성
-        refreshTokenService.createRefreshToken(user);
+        // 리프레시 토큰 확인 및 생성과 갱신
+        Optional<RefreshToken> optionalRefreshToken = refreshTokenService.findByUser(user);
+        RefreshToken refreshToken;
+        if (optionalRefreshToken.isPresent()) {
+            refreshToken = optionalRefreshToken.get();
+            // 리프레시 토큰 갱신 (필요 시 만료 시간 등을 업데이트)
+            refreshToken.setExpiryDate(LocalDateTime.now().plusWeeks(2));
+        } else {
+            refreshToken = refreshTokenService.createRefreshToken(user);
+        }
+        refreshTokenService.save(refreshToken);
 
         jwtUtil.addJwtToCookie(token, res);
 
