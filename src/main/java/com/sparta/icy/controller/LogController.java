@@ -1,72 +1,36 @@
 package com.sparta.icy.controller;
 
 import com.sparta.icy.dto.LoginRequestDto;
-import com.sparta.icy.jwt.JwtUtil;
 import com.sparta.icy.service.LogService;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/log")
+@RequiredArgsConstructor
 public class LogController {
 
-    private final AuthenticationManager authenticationManager;
-    private final JwtUtil jwtUtil;
     private final LogService logService;
 
-    public LogController(AuthenticationManager authenticationManager, JwtUtil jwtUtil, LogService logService) {
-        this.authenticationManager = authenticationManager;
-        this.jwtUtil = jwtUtil;
-        this.logService = logService;
-    }
 
     @PostMapping("/login")
     public ResponseEntity<String> authenticateUser(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
         System.out.println("로그인 요청 수신: " + loginRequestDto.getUsername());
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority("user"));
 
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginRequestDto.getUsername(),
-                        loginRequestDto.getPassword(),
-                        authorities
-                )
-        );
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        logService.login(loginRequestDto, response);
 
         // 로그인 성공 시 로그 추가
-        logService.addLog(loginRequestDto.getUsername(), "로그인");
+        //logService.addLog(loginRequestDto.getUsername(), "로그인");
 
-        // 토큰 생성
-        String token = jwtUtil.createToken(loginRequestDto.getUsername(), null, true);
-        jwtUtil.addJwtToCookie(token, response);
+
         return ResponseEntity.ok("로그인에 성공하였습니다.");
     }
-
-    @PostMapping("/logout")
+    @GetMapping("/logout")
     public ResponseEntity<String> logout(HttpServletResponse response) {
-        Cookie cookie = new Cookie(JwtUtil.AUTHORIZATION_HEADER, null);
-        cookie.setPath("/");
-        cookie.setHttpOnly(true);
-        cookie.setMaxAge(0);
-        response.addCookie(cookie);
+
+        logService.logout(response);
         return ResponseEntity.ok("로그아웃되었습니다.");
     }
 

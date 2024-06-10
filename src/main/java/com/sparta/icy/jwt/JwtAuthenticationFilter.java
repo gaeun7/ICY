@@ -24,7 +24,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     public JwtAuthenticationFilter(JwtUtil jwtUtil) { // LogController를 생성자에 추가
         this.jwtUtil = jwtUtil;
        // this.logController = logController;
-        setFilterProcessesUrl("/user/login");
+        //setFilterProcessesUrl("/log/login");
     }
 
     @Override
@@ -50,12 +50,12 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         log.info("로그인 성공 및 JWT 생성");
         String username = ((UserDetailsImpl) authResult.getPrincipal()).getUsername();
-        Long userId = ((UserDetailsImpl) authResult.getPrincipal()).getId();
+        //Long userId = ((UserDetailsImpl) authResult.getPrincipal()).getId();
 
-        String token = jwtUtil.createToken(username, userId, true);
+        String token = jwtUtil.createToken(username, true);
         jwtUtil.addJwtToCookie(token, response);
 
-        // 로그 추가
+        // 로그 추가 -> Controller 호출하지 마셈
         //logController.addLoginLog(username);
     }
 

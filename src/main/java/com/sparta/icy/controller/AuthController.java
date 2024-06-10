@@ -1,4 +1,4 @@
-package com.sparta.icy.config;
+package com.sparta.icy.controller;
 
 import com.sparta.icy.jwt.JwtUtil;
 import jakarta.servlet.http.Cookie;

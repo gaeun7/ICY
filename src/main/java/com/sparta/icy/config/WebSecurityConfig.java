@@ -10,17 +10,19 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.stereotype.Service;
 
 @Service
-@ComponentScan(basePackages = ("com.sparta"))
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
@@ -28,7 +30,6 @@ public class WebSecurityConfig {
     private final JwtUtil jwtUtil;
     private final UserDetailsServiceImpl userDetailsService;
     private final AuthenticationConfiguration authenticationConfiguration;
-    private
 
     public WebSecurityConfig(JwtUtil jwtUtil, UserDetailsServiceImpl userDetailsService, AuthenticationConfiguration authenticationConfiguration) {
         this.jwtUtil = jwtUtil;
@@ -36,23 +37,30 @@ public class WebSecurityConfig {
         this.authenticationConfiguration = authenticationConfiguration;
     }
 
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
 //    @Bean
 //    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
 //        return configuration.getAuthenticationManager();
 //    }
-@Bean
-AuthenticationManager authenticationManager() {
-    DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-    provider.setUserDetailsService(customLoginService);
-    provider.setPasswordEncoder(passwordEncoder());
+
+    @Bean
+    AuthenticationManager authenticationManager() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(userDetailsService);
+        provider.setPasswordEncoder(passwordEncoder());
+        return new ProviderManager(provider);
     }
 
-//    @Bean
-//    public JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
-//        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtUtil); // LogController 인스턴스를 생성자에 추가
-//        filter.setAuthenticationManager(authenticationManager(authenticationConfiguration));
-//        return filter;
-//    }
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
+        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtUtil); // LogController 인스턴스를 생성자에 추가
+        filter.setAuthenticationManager(authenticationManager());
+        return filter;
+    }
 
     @Bean
     public JwtAuthorizationFilter jwtAuthorizationFilter() {
@@ -72,16 +80,17 @@ AuthenticationManager authenticationManager() {
         http.authorizeHttpRequests((authorizeHttpRequests) ->
                 authorizeHttpRequests
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // 리소스에 대한 접근 허용
-                        .requestMatchers("/user/**", "/log/**").permitAll() //
+                        .requestMatchers("/user/sign-up", "/log/**").permitAll() //
                         .requestMatchers("/newsfeed").permitAll() // 모든 사용자에게 뉴스피드 조회 허용
                         .requestMatchers("/newsfeed/*").permitAll() // 모든 사용자에게 특정 게시물 조회 허용
                         .requestMatchers("/newsfeed/create").authenticated() // 게시물 작성, 수정, 삭제는 인증 필요
+                        .requestMatchers("/user/sign-out").authenticated()
                         .anyRequest().authenticated() // 나머지 요청은 인증 필요
         );
 
         // 필터 추가
-        http.addFilterBefore(jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
-        //http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
+        http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
+        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
 
         return http.build();

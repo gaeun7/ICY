@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/comment")
+@RequestMapping("/comments")
 public class CommentController {
     private final CommentService commentService;
 
@@ -28,18 +28,14 @@ public class CommentController {
         return commentService.getComments(feed_id);
     }
 
-    @PutMapping("/{comments_id}")
+    @PutMapping("/{comment_id}")
     public void updateComment(@PathVariable Long comments_id, @RequestBody CommentRequestDto requestDto) {
         commentService.updateComment(comments_id, requestDto);
     }
 
-    @DeleteMapping("/{comments_id}")
+    @DeleteMapping("/{comment_id}")
     public void deleteComment(@PathVariable Long comments_id) {
         commentService.deleteComment(comments_id);
     }
 
-    private Long getUserIdFromAuthentication(Authentication authentication) {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        return Long.valueOf(userDetails.getUsername());
-    }
 }
