@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.text.CollationKey;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -55,6 +56,8 @@ public class LogService {
             refreshToken = refreshTokenService.createRefreshToken(user);
         }
         refreshTokenService.save(refreshToken);
+
+        jwtUtil.addRefreshTokenToCookie(refreshToken.getToken(), res);
 
         jwtUtil.addJwtToCookie(token, res);
 

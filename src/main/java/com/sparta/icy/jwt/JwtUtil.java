@@ -126,4 +126,18 @@ public class JwtUtil {
         return null;
 
     }
+
+    public void addRefreshTokenToCookie(String refreshToken, HttpServletResponse res) {
+        try {
+            refreshToken = URLEncoder.encode(refreshToken, "utf-8").replaceAll("\\+", "%20");
+
+            Cookie cookie = new Cookie("refreshToken", refreshToken); // Name-Value
+            cookie.setPath("/");
+
+            // Response 객체에 Cookie 추가
+            res.addCookie(cookie);
+        } catch (UnsupportedEncodingException e) {
+            logger.error(e.getMessage());
+        }
+    }
 }
