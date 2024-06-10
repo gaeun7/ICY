@@ -1,5 +1,4 @@
 package com.sparta.icy.controller;
-
 import com.sparta.icy.dto.SignupRequestDto;
 import com.sparta.icy.dto.UserProfileResponse;
 import com.sparta.icy.dto.UserUpdateRequest;
@@ -46,16 +45,33 @@ public class UserController {
         return "회원가입 성공";
     }
 
-    @DeleteMapping("/sign-out")
-    public ResponseEntity<String> signout(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam(required = false) String password, @PathVariable(required = false) String username) {
-        String userToDelete = (userDetails != null) ? userDetails.getUsername() : username;
-        boolean result = userService.signout(userToDelete, password);
 
-        if (result) {
-            return ResponseEntity.ok("탈퇴 성공");
-        } else {
-            return ResponseEntity.badRequest().body("탈퇴 실패");
+    @PatchMapping("/sign-out")
+    public String signout(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody SignoutRequestDto signoutRequestDto) {
+        User user=userDetails.getUser();
+        boolean result= userService.signout(user.getUsername(), signoutRequestDto);
+        //탈퇴 실패
+        if(!result){
+            return "탈퇴 실패";
         }
+        //탈퇴 성공
+        return "탈퇴 성공";
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody LoginRequestDto requestDto, HttpServletResponse response) {
+        // 사용자 인증
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(requestDto.getUsername(), requestDto.getPassword())
+        );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        // JWT 토큰 생성
+        String token = jwtUtil.createToken(requestDto.getUsername(), null, true);
+        jwtUtil.addJwtToCookie(token, response);
+
+        // 로그 추가
+        logService.addLoginLog(requestDto.getUsername());
     }
 
     @PutMapping("/{id}")

@@ -1,5 +1,6 @@
 package com.sparta.icy.service;
 
+import com.sparta.icy.dto.SignoutRequestDto;
 import com.sparta.icy.dto.SignupRequestDto;
 import com.sparta.icy.dto.UserProfileResponse;
 import com.sparta.icy.dto.UserUpdateRequest;
@@ -92,8 +93,8 @@ public class UserService {
             throw new DuplicateUsernameException("중복된 사용자가 존재합니다.");
         }
 
-        //회원 상태 등록
-        UserStatus status = UserStatus.IN_ACTION;
+       //회원 상태 등록
+        UserStatus status=UserStatus.IN_ACTION;
 
         // 사용자 등록
         //String username, String nickname, String password, String email, String intro, UserStatus status
@@ -101,7 +102,7 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public boolean signout(String userDetailsUsername, String password) {
+    public boolean signout(String userDetailsUsername, SignoutRequestDto signoutRequestDto) {
         try {
             User checkUsername = userRepository.findByUsername(userDetailsUsername).orElseThrow();
 
@@ -111,7 +112,7 @@ public class UserService {
 
             }
             //사용자가 입력한 비밀번호가 현재 로그인된 비밀번호와 맞는지 확인
-            if (!checkUsername.getPassword().equals(password)) {
+            if (!passwordEncoder.matches(checkUsername.getPassword(), signoutRequestDto.getPassword())) {
                 throw new PasswordDoesNotMatchException("기존 비밀번호와 일치하지 않음");
             }
 

@@ -5,4 +5,3 @@ public class PasswordDoesNotMatchException extends RuntimeException{
         super(message);
     }
 }
-

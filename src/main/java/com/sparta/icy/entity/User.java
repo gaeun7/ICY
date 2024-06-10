@@ -24,6 +24,7 @@ public class User extends TimeStamped {
     private String password;
     @Column(nullable = false, unique = true)
     private String email;
+
     @Column(nullable = false)
     private String intro;
 
