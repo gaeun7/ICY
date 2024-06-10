@@ -1,26 +1,31 @@
 package com.sparta.icy.controller;
 
-import com.sparta.icy.dto.AuthResponse;
-import com.sparta.icy.dto.LoginRequestDto;
-import com.sparta.icy.dto.UserRequestDto;
-import com.sparta.icy.entity.RefreshToken;
+import com.sparta.icy.dto.*;
 import com.sparta.icy.entity.User;
 import com.sparta.icy.jwt.JwtUtil;
-import com.sparta.icy.service.AuthService;
+import com.sparta.icy.security.UserDetailsImpl;
 import com.sparta.icy.service.CustomUserDetailsService;
+import com.sparta.icy.service.LogService;
 import com.sparta.icy.service.RefreshTokenService;
+import com.sparta.icy.service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
+import java.util.List;
+
 @RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor
@@ -28,7 +33,7 @@ import java.time.LocalDateTime;
 public class UserController {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
-   @Autowired
+    @Autowired
     private AuthenticationManager authenticationManager;
 
     @Autowired
@@ -40,12 +45,8 @@ public class UserController {
     @Autowired
     private RefreshTokenService refreshTokenService;
 
-
-    @PostMapping("/register")
-    public ResponseEntity<UserRequestDto> register(@RequestBody UserRequestDto requestDto){
-        return null;
-    }
-
+    @Autowired
+    private LogService logService;
 
     @GetMapping("/{id}")
     public ResponseEntity<UserProfileResponse> getUser(@PathVariable long id) {
@@ -56,7 +57,7 @@ public class UserController {
     public String signup(@Valid @RequestBody SignupRequestDto requestDto, BindingResult bindingResult) {
         // Validation 예외처리
         List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-        if(fieldErrors.size() > 0) {
+        if (fieldErrors.size() > 0) {
             for (FieldError fieldError : bindingResult.getFieldErrors()) {
                 log.error(fieldError.getField() + " 필드 : " + fieldError.getDefaultMessage());
             }
@@ -70,10 +71,10 @@ public class UserController {
 
     @PatchMapping("/sign-out")
     public String signout(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody SignoutRequestDto signoutRequestDto) {
-        User user=userDetails.getUser();
-        boolean result= userService.signout(user.getUsername(), signoutRequestDto);
+        User user = userDetails.getUser();
+        boolean result = userService.signout(user.getUsername(), signoutRequestDto);
         //탈퇴 실패
-        if(!result){
+        if (!result) {
             return "탈퇴 실패";
         }
         //탈퇴 성공
@@ -94,6 +95,8 @@ public class UserController {
 
         // 로그 추가
         logService.addLoginLog(requestDto.getUsername());
+
+        return ResponseEntity.ok("로그인 성공");
     }
 
     @PutMapping("/{id}")
@@ -101,6 +104,4 @@ public class UserController {
         User updatedUser = userService.updateUser(id, req);
         return ResponseEntity.ok(updatedUser);
     }
-
-
 }

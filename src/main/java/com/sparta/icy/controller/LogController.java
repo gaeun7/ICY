@@ -60,4 +60,10 @@ public class LogController {
         response.addCookie(cookie);
         return ResponseEntity.ok("로그아웃되었습니다.");
     }
+
+    @PostMapping("/add-login-log")
+    public ResponseEntity<String> addLoginLog(@RequestBody String username) {
+        logService.addLog(username, "로그인"); // 로그인 로그 추가
+        return ResponseEntity.ok("로그 추가 완료");
+    }
 }

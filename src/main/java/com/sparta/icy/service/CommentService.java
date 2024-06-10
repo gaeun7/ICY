@@ -1,10 +1,10 @@
 package com.sparta.icy.service;
 
-import com.sparta.icy.entity.Newsfeed;
-import com.sparta.icy.entity.User;
 import com.sparta.icy.dto.CommentRequestDto;
 import com.sparta.icy.dto.CommentResponseDto;
 import com.sparta.icy.entity.Comment;
+import com.sparta.icy.entity.Newsfeed;
+import com.sparta.icy.entity.User;
 import com.sparta.icy.repository.CommentRepository;
 import com.sparta.icy.repository.NewsfeedRepository;
 import com.sparta.icy.security.UserDetailsImpl;
