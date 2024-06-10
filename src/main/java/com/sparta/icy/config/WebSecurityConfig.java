@@ -15,7 +15,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -65,6 +64,9 @@ public class WebSecurityConfig {
                 authorizeHttpRequests
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // 리소스에 대한 접근 허용
                         .requestMatchers("/user/**", "/log/**").permitAll() //
+                        .requestMatchers("/newsfeed").permitAll() // 모든 사용자에게 뉴스피드 조회 허용
+                        .requestMatchers("/newsfeed/*").permitAll() // 모든 사용자에게 특정 게시물 조회 허용
+                        .requestMatchers("/newsfeed/create").authenticated() // 게시물 작성, 수정, 삭제는 인증 필요
                         .anyRequest().authenticated() // 나머지 요청은 인증 필요
         );
 

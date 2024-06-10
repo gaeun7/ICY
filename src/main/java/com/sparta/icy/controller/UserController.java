@@ -1,30 +1,22 @@
 package com.sparta.icy.controller;
 
-import com.sparta.icy.dto.*;
-import com.sparta.icy.entity.RefreshToken;
+import com.sparta.icy.dto.SignoutRequestDto;
+import com.sparta.icy.dto.SignupRequestDto;
+import com.sparta.icy.dto.UserProfileResponse;
+import com.sparta.icy.dto.UserUpdateRequest;
 import com.sparta.icy.entity.User;
-import com.sparta.icy.jwt.JwtUtil;
 import com.sparta.icy.security.UserDetailsImpl;
-import com.sparta.icy.service.*;
-import jakarta.servlet.http.HttpServletResponse;
+import com.sparta.icy.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -33,18 +25,6 @@ import java.util.List;
 @Slf4j
 public class UserController {
     private final UserService userService;
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private JwtUtil jwtUtil;
-
-    private final LogService logService;
-
-    @PostMapping("/register")
-    public ResponseEntity<UserRequestDto> register(@RequestBody UserRequestDto requestDto) {
-        return null;
-    }
 
 
     @GetMapping("/{id}")
@@ -56,7 +36,7 @@ public class UserController {
     public String signup(@Valid @RequestBody SignupRequestDto requestDto, BindingResult bindingResult) {
         // Validation 예외처리
         List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-        if (fieldErrors.size() > 0) {
+        if(fieldErrors.size() > 0) {
             for (FieldError fieldError : bindingResult.getFieldErrors()) {
                 log.error(fieldError.getField() + " 필드 : " + fieldError.getDefaultMessage());
             }
@@ -70,10 +50,10 @@ public class UserController {
 
     @PatchMapping("/sign-out")
     public String signout(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody SignoutRequestDto signoutRequestDto) {
-        User user = userDetails.getUser();
-        boolean result = userService.signout(user.getUsername(), signoutRequestDto);
+        User user=userDetails.getUser();
+        boolean result= userService.signout(user.getUsername(), signoutRequestDto);
         //탈퇴 실패
-        if (!result) {
+        if(!result){
             return "탈퇴 실패";
         }
         //탈퇴 성공
@@ -85,5 +65,6 @@ public class UserController {
         User updatedUser = userService.updateUser(id, req);
         return ResponseEntity.ok(updatedUser);
     }
+
 
 }

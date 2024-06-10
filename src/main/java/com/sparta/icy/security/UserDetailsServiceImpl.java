@@ -1,7 +1,7 @@
 package com.sparta.icy.security;
 
-import com.sparta.icy.entity.UserStatus;
 import com.sparta.icy.entity.User;
+import com.sparta.icy.entity.UserStatus;
 import com.sparta.icy.repository.UserRepository;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.userdetails.UserDetails;
