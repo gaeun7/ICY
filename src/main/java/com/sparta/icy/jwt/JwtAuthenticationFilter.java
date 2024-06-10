@@ -1,7 +1,6 @@
 package com.sparta.icy.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sparta.icy.controller.LogController;
 import com.sparta.icy.dto.LoginRequestDto;
 import com.sparta.icy.security.UserDetailsImpl;
 import jakarta.servlet.FilterChain;
@@ -19,12 +18,9 @@ import java.io.IOException;
 @Slf4j(topic = "로그인 및 JWT 생성")
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final JwtUtil jwtUtil;
-    //private final LogController logController;
 
-    public JwtAuthenticationFilter(JwtUtil jwtUtil) { // LogController를 생성자에 추가
+    public JwtAuthenticationFilter(JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
-       // this.logController = logController;
-        //setFilterProcessesUrl("/log/login");
     }
 
     @Override
@@ -50,13 +46,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         log.info("로그인 성공 및 JWT 생성");
         String username = ((UserDetailsImpl) authResult.getPrincipal()).getUsername();
-        //Long userId = ((UserDetailsImpl) authResult.getPrincipal()).getId();
 
         String token = jwtUtil.createToken(username, true);
         jwtUtil.addJwtToCookie(token, response);
-
-        // 로그 추가 -> Controller 호출하지 마셈
-        //logController.addLoginLog(username);
     }
 
     @Override

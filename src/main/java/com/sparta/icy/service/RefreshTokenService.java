@@ -12,7 +12,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class RefreshTokenService {
+public class  RefreshTokenService {
 
     @Autowired
     private RefreshTokenRepository refreshTokenRepository;

@@ -3,8 +3,6 @@ package com.sparta.icy.controller;
 import com.sparta.icy.dto.CommentRequestDto;
 import com.sparta.icy.dto.CommentResponseDto;
 import com.sparta.icy.service.CommentService;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

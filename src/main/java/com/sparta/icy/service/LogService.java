@@ -9,7 +9,6 @@ import com.sparta.icy.repository.LogRepository;
 import com.sparta.icy.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -41,8 +40,6 @@ public class LogService {
         String token = jwtUtil.createToken(dto.getUsername(), true);
         jwtUtil.addJwtToCookie(token, res);
 
-//        String token = jwtUtil.createToken(user);
-//        jwtUtil.addJwtToCookie(token, res);
         return token;
     }
 

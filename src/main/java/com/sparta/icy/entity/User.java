@@ -6,8 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @Entity
 @Getter
 @NoArgsConstructor
@@ -39,10 +37,6 @@ public class User extends TimeStamped {
         this.status = status.getStatus();
     }
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Comment> comments;
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Newsfeed> newsfeeds;
 
     public void update(UserUpdateRequest req) {
         this.nickname = req.getNickname();

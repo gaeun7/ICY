@@ -97,7 +97,7 @@ public class UserService {
         UserStatus status=UserStatus.IN_ACTION;
 
         // 사용자 등록
-        //String username, String nickname, String password, String email, String intro, UserStatus status
+
         User user = new User(username, requestDto.getNickname(), password, requestDto.getEmail(), requestDto.getIntro(), status);
         userRepository.save(user);
     }
