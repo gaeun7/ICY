@@ -47,7 +47,7 @@ public class UserController {
     }
 
 
-    @PatchMapping("/signOut")
+    @PatchMapping("/signout")
     public String signout(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody SignoutRequestDto signoutRequestDto) {
         User user=userDetails.getUser();
         boolean result= userService.signout(user.getUsername(), signoutRequestDto);
