@@ -1,21 +1,15 @@
 package com.sparta.icy.controller;
-
-import com.sparta.icy.dto.*;
+import com.sparta.icy.dto.SignupRequestDto;
+import com.sparta.icy.dto.UserProfileResponse;
+import com.sparta.icy.dto.UserUpdateRequest;
 import com.sparta.icy.entity.User;
-import com.sparta.icy.jwt.JwtUtil;
 import com.sparta.icy.security.UserDetailsImpl;
-import com.sparta.icy.service.LogService;
 import com.sparta.icy.service.UserService;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -29,9 +23,6 @@ import java.util.List;
 @Slf4j
 public class UserController {
     private final UserService userService;
-    private final LogService logService;
-    private final JwtUtil jwtUtil;
-    private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
 
     @GetMapping("/{id}")
@@ -53,6 +44,7 @@ public class UserController {
 
         return "회원가입 성공";
     }
+
 
     @PatchMapping("/sign-out")
     public String signout(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody SignoutRequestDto signoutRequestDto) {
@@ -80,14 +72,6 @@ public class UserController {
 
         // 로그 추가
         logService.addLoginLog(requestDto.getUsername());
-
-        return ResponseEntity.ok("로그인 성공");
-    }
-
-    @PostMapping("/logout")
-    public ResponseEntity<String> logout(HttpServletResponse response) {
-        userService.logout(response);
-        return ResponseEntity.ok("로그아웃 성공");
     }
 
     @PutMapping("/{id}")
@@ -95,6 +79,5 @@ public class UserController {
         User updatedUser = userService.updateUser(id, req);
         return ResponseEntity.ok(updatedUser);
     }
-
 
 }
