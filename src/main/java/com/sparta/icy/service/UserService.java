@@ -3,27 +3,22 @@ package com.sparta.icy.service;
 import com.sparta.icy.dto.SignupRequestDto;
 import com.sparta.icy.dto.UserProfileResponse;
 import com.sparta.icy.dto.UserUpdateRequest;
-import com.sparta.icy.entity.UserStatus;
 import com.sparta.icy.entity.User;
-import com.sparta.icy.error.DuplicateUsernameException;
-import com.sparta.icy.error.ResignupWithSignedoutUsernameException;
-import com.sparta.icy.repository.UserRepository;
+import com.sparta.icy.entity.UserStatus;
 import com.sparta.icy.error.AlreadySignedOutUserCannotBeSignoutAgainException;
+import com.sparta.icy.error.DuplicateUsernameException;
 import com.sparta.icy.error.PasswordDoesNotMatchException;
 import com.sparta.icy.jwt.JwtUtil;
+import com.sparta.icy.repository.UserRepository;
 import com.sparta.icy.security.UserDetailsImpl;
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 
 import java.util.Optional;
 
@@ -34,6 +29,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final LogService logService; // LogService 주입
 
     public UserProfileResponse getUser(long id) {
         User user = userRepository.findById(id)
@@ -122,6 +118,10 @@ public class UserService {
             //탈퇴한 회원으로 전환
             checkUsername.setStatus(UserStatus.SECESSION.getStatus());
             userRepository.save(checkUsername); // 변경된 상태를 저장
+
+            // 탈퇴한 회원 로그 추가
+            logService.addLog(userDetailsUsername, "탈퇴"); // LogService의 addLog 메서드 호출
+
             return true;
 
         } catch (PasswordDoesNotMatchException | AlreadySignedOutUserCannotBeSignoutAgainException e) {
@@ -129,19 +129,6 @@ public class UserService {
             log.error(e.getMessage(), e);
             return false;
         }
-    }
-
-    private boolean isValidUsername(String username) {
-        String regex = "^[a-zA-Z0-9]+$";
-        return username.matches(regex);
-    }
-
-    public void logout(HttpServletResponse response) {
-        Cookie cookie = new Cookie(JwtUtil.AUTHORIZATION_HEADER, null);
-        cookie.setPath("/");
-        cookie.setHttpOnly(true);
-        cookie.setMaxAge(0);
-        response.addCookie(cookie);
     }
 
     private static User getcurrentUser() {
@@ -157,5 +144,8 @@ public class UserService {
         UserDetailsImpl userDetails = (UserDetailsImpl) principal;
         User currentUser = userDetails.getUser();
         return currentUser;
+    }
+
+    public void logout(HttpServletResponse response) {
     }
 }

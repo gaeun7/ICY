@@ -4,8 +4,6 @@ import com.sparta.icy.entity.Log;
 import com.sparta.icy.repository.LogRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-
 @Service
 public class LogService {
     private final LogRepository logRepository;
@@ -15,10 +13,15 @@ public class LogService {
     }
 
     public void addLog(String username, String action) {
-        Log log = new Log();
-        log.setUsername(username);
-        log.setAction(action);
-        log.setTimestamp(new Date());
+        Log log = new Log(username, action);
         logRepository.save(log);
+    }
+
+    public void addLoginLog(String username) {
+        addLog(username, "로그인");
+    }
+
+    public void addLogoutLog(String username) {
+        addLog(username, "로그아웃");
     }
 }

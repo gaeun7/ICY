@@ -1,25 +1,29 @@
 package com.sparta.icy.controller;
 
+import com.sparta.icy.dto.LoginRequestDto;
 import com.sparta.icy.dto.SignupRequestDto;
 import com.sparta.icy.dto.UserProfileResponse;
 import com.sparta.icy.dto.UserUpdateRequest;
 import com.sparta.icy.entity.User;
+import com.sparta.icy.jwt.JwtUtil;
 import com.sparta.icy.security.UserDetailsImpl;
+import com.sparta.icy.service.LogService;
 import com.sparta.icy.service.UserService;
-import com.sparta.icy.error.AlreadySignedOutUserCannotBeSignoutAgainException;
-import com.sparta.icy.error.PasswordDoesNotMatchException;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Controller;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -28,23 +32,15 @@ import java.util.List;
 @Slf4j
 public class UserController {
     private final UserService userService;
+    private final LogService logService;
+    private final JwtUtil jwtUtil;
+    private final AuthenticationManager authenticationManager;
+    private final PasswordEncoder passwordEncoder;
+
     @GetMapping("/{id}")
     public ResponseEntity<UserProfileResponse> getUser(@PathVariable long id) {
         return ResponseEntity.ok(userService.getUser(id));
     }
-    @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable long id, @RequestBody UserUpdateRequest req) {
-        return ResponseEntity.ok(userService.updateUser(id, req));
-    }
-    @GetMapping("/login-page")
-    public String loginPage() {
-        return "login";
-    }
-    @GetMapping("/login-success")
-    public String mainPage() {
-        return "index";
-    }
-
 
     @PostMapping("/sign-up")
     public String signup(@Valid @RequestBody SignupRequestDto requestDto, BindingResult bindingResult) {
@@ -73,9 +69,43 @@ public class UserController {
         return "탈퇴 성공";
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody LoginRequestDto requestDto, HttpServletResponse response) {
+        // 사용자 인증
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(requestDto.getUsername(), requestDto.getPassword())
+        );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        // JWT 토큰 생성
+        String token = jwtUtil.createToken(requestDto.getUsername(), null, true);
+        jwtUtil.addJwtToCookie(token, response);
+
+        // 로그 추가
+        logService.addLoginLog(requestDto.getUsername());
+
+        return ResponseEntity.ok("로그인 성공");
+    }
+
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpServletResponse response) {
         userService.logout(response);
-        return ResponseEntity.ok("User logged out successfully");
+        return ResponseEntity.ok("로그아웃 성공");
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable long id, @RequestBody UserUpdateRequest req) {
+        User updatedUser = userService.updateUser(id, req);
+        return ResponseEntity.ok(updatedUser);
+    }
+
+    @DeleteMapping("/user/{username}")
+    public ResponseEntity<String> signout(@PathVariable String username, @RequestParam String password) {
+        boolean result = userService.signout(username, password);
+        if (result) {
+            return ResponseEntity.ok("탈퇴 성공");
+        } else {
+            return ResponseEntity.badRequest().body("탈퇴 실패");
+        }
     }
 }

@@ -57,4 +57,10 @@ public class LogController {
         // 클라이언트에게 성공 메시지 전달
         return ResponseEntity.ok("로그아웃 성공");
     }
+
+    @PostMapping("/add-login-log")
+    public ResponseEntity<String> addLoginLog(@RequestBody String username) {
+        logService.addLog(username, "로그인"); // 로그인 로그 추가
+        return ResponseEntity.ok("로그 추가 완료");
+    }
 }

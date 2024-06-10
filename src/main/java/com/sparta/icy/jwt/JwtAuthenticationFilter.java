@@ -3,6 +3,7 @@ package com.sparta.icy.jwt;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.icy.dto.LoginRequestDto;
 import com.sparta.icy.security.UserDetailsImpl;
+import com.sparta.icy.controller.LogController;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,9 +19,11 @@ import java.io.IOException;
 @Slf4j(topic = "로그인 및 JWT 생성")
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final JwtUtil jwtUtil;
+    private final LogController logController;
 
-    public JwtAuthenticationFilter(JwtUtil jwtUtil) {
+    public JwtAuthenticationFilter(JwtUtil jwtUtil, LogController logController) { // LogController를 생성자에 추가
         this.jwtUtil = jwtUtil;
+        this.logController = logController;
         setFilterProcessesUrl("/user/login");
     }
 
@@ -51,6 +54,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         String token = jwtUtil.createToken(username, userId, true);
         jwtUtil.addJwtToCookie(token, response);
+
+        // 로그 추가
+        logController.addLoginLog(username);
     }
 
     @Override

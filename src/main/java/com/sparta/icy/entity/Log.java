@@ -7,6 +7,7 @@ import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 import java.util.Date;
 
 @Entity
@@ -23,4 +24,10 @@ public class Log {
     private Date timestamp;
 
     // 생성자 및 필요한 메서드 추가
+
+    public Log(String username, String action) {
+        this.username = username;
+        this.action = action;
+        this.timestamp = new Date();
+    }
 }

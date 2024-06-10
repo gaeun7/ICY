@@ -1,5 +1,6 @@
 package com.sparta.icy.config;
 
+import com.sparta.icy.controller.LogController;
 import com.sparta.icy.jwt.JwtAuthenticationFilter;
 import com.sparta.icy.jwt.JwtAuthorizationFilter;
 import com.sparta.icy.jwt.JwtUtil;
@@ -18,9 +19,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.stereotype.Service;
 
 @Service
-@Configuration
-@EnableWebSecurity // Spring Security 지원을 가능하게 함
 @ComponentScan(basePackages = ("com.sparta"))
+@Configuration
+@EnableWebSecurity
 public class WebSecurityConfig {
 
     private final JwtUtil jwtUtil;
@@ -39,8 +40,8 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
-        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtUtil);
+    public JwtAuthenticationFilter jwtAuthenticationFilter(LogController logController) throws Exception {
+        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtUtil, logController); // LogController 인스턴스를 생성자에 추가
         filter.setAuthenticationManager(authenticationManager(authenticationConfiguration));
         return filter;
     }
@@ -55,26 +56,23 @@ public class WebSecurityConfig {
         // CSRF 설정
         http.csrf((csrf) -> csrf.disable());
 
-        // 기본 설정인 Session 방식은 사용하지 않고 JWT 방식을 사용하기 위한 설정
+        // 기본 설정인 Session 방식 대신 JWT 방식을 사용하기 위한 설정
         http.sessionManagement((sessionManagement) ->
                 sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         );
 
         http.authorizeHttpRequests((authorizeHttpRequests) ->
                 authorizeHttpRequests
-                        .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // resources 접근 허용 설정
-                        .requestMatchers("/user/**").permitAll() // '/api/user/'로 시작하는 요청 모두 접근 허가
-                        .anyRequest().authenticated() // 그 외 모든 요청 인증처리
+                        .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // 리소스에 대한 접근 허용
+                        .requestMatchers("/user/login").permitAll() // 로그인 API에 대한 접근 허용
+                        .requestMatchers("/user/logout").permitAll() // 로그아웃 API에 대한 접근 허용
+                        .anyRequest().authenticated() // 나머지 요청은 인증 필요
         );
 
-        http.formLogin((formLogin) ->
-                formLogin
-                        .loginPage("/user/login-page").permitAll()
-        );
-
-        // 필터 관리
+        // 필터 추가
         http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
-        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
+
 
         return http.build();
     }
