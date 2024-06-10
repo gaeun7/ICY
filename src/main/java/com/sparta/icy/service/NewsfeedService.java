@@ -28,12 +28,21 @@ public class NewsfeedService {
     public void createNewsfeed(NewsfeedDto newsfeedDto) {
         User currentUser = getUser();
 
+        String title = newsfeedDto.getTitle();
+        int recruitmentCount = newsfeedDto.getRecruitmentCount();
         String content = newsfeedDto.getContent();
+
+        if (title == null || title.trim().isEmpty()) {
+            throw new IllegalArgumentException("프로젝트 제목이 비어있습니다.");
+        }
+
         if (content == null || content.trim().isEmpty()) {
-            throw new IllegalArgumentException("뉴스피드 내용이 비어있습니다.");
+            throw new IllegalArgumentException("프로젝트 내용이 비어있습니다.");
         }
 
         Newsfeed newsfeed = new Newsfeed();
+        newsfeed.setTitle(title);
+        newsfeed.setRecruitmentCount(recruitmentCount);
         newsfeed.setContent(content);
         LocalDateTime now = LocalDateTime.now();
         newsfeed.setCreated_at(now);
@@ -59,20 +68,20 @@ public class NewsfeedService {
         return currentUser;
     }
 
-    // 특정 게시물 조회 메서드
     public NewsfeedResponseDto getNewsfeed(Long id) {
         Newsfeed newsfeed = newsfeedRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID의 게시물을 찾을 수 없습니다: " + id));
-        NewsfeedResponseDto newsfeedResponseDto = new NewsfeedResponseDto();
-        newsfeedResponseDto.setId(newsfeed.getId());
-        newsfeedResponseDto.setContent(newsfeed.getContent());
-        newsfeedResponseDto.setCreated_at(newsfeed.getCreated_at());
-        newsfeedResponseDto.setUpdated_at(newsfeed.getUpdated_at());
-        newsfeedResponseDto.setUser_id(newsfeed.getUser().getId());
-        return newsfeedResponseDto;
+        return new NewsfeedResponseDto(
+                newsfeed.getId(),
+                newsfeed.getTitle(),
+                newsfeed.getRecruitmentCount(),
+                newsfeed.getContent(),
+                newsfeed.getCreated_at(),
+                newsfeed.getUpdated_at(),
+                newsfeed.getUser().getId()
+        );
     }
 
-    // 게시물 수정 메서드
     public void updateNewsfeed(Long feed_id, NewsfeedDto newsfeedDto) {
         User currentUser = getUser();
         Newsfeed newsfeed = newsfeedRepository.findById(feed_id)
@@ -81,12 +90,14 @@ public class NewsfeedService {
         if (!currentUser.getUsername().equals(newsfeed.getUser().getUsername())) {
             throw new IllegalArgumentException("게시물 업데이트 권한이 없습니다.");
         }
+
+        newsfeed.setTitle(newsfeedDto.getTitle());
+        newsfeed.setRecruitmentCount(newsfeedDto.getRecruitmentCount());
         newsfeed.setContent(newsfeedDto.getContent());
         newsfeed.setUpdated_at(LocalDateTime.now());
         newsfeedRepository.save(newsfeed);
     }
 
-    // 게시물 삭제 메서드
     public void deleteNewsfeed(Long id) {
         User currentUser = getUser();
         Newsfeed newsfeed = newsfeedRepository.findById(id)
@@ -98,23 +109,21 @@ public class NewsfeedService {
         newsfeedRepository.delete(newsfeed);
     }
 
-    // 모든 게시물 조회 메서드
     public List<NewsfeedResponseDto> getAllNewsfeed() {
         List<Newsfeed> newsfeeds = newsfeedRepository.findAll();
 
-        // 게시물을 생성일 기준으로 내림차순으로 정렬
         newsfeeds.sort(Comparator.comparing(Newsfeed::getCreated_at).reversed());
 
         return newsfeeds.stream()
-                .map(newsfeed -> {
-                    NewsfeedResponseDto newsfeedResponseDto = new NewsfeedResponseDto();
-                    newsfeedResponseDto.setId(newsfeed.getId());
-                    newsfeedResponseDto.setContent(newsfeed.getContent());
-                    newsfeedResponseDto.setCreated_at(newsfeed.getCreated_at());
-                    newsfeedResponseDto.setUpdated_at(newsfeed.getUpdated_at());
-                    newsfeedResponseDto.setUser_id(newsfeed.getUser().getId());
-                    return newsfeedResponseDto;
-                })
+                .map(newsfeed -> new NewsfeedResponseDto(
+                        newsfeed.getId(),
+                        newsfeed.getTitle(),
+                        newsfeed.getRecruitmentCount(),
+                        newsfeed.getContent(),
+                        newsfeed.getCreated_at(),
+                        newsfeed.getUpdated_at(),
+                        newsfeed.getUser().getId()
+                ))
                 .collect(Collectors.toList());
     }
 }

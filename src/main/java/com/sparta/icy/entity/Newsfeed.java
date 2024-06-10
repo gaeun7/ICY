@@ -21,6 +21,12 @@ public class Newsfeed {
     private User user;
 
     @Column(nullable = false)
+    private String title;
+
+    @Column(nullable = false)
+    private int recruitmentCount;
+
+    @Column(nullable = false)
     private String content;
 
     @Temporal(TemporalType.TIMESTAMP)

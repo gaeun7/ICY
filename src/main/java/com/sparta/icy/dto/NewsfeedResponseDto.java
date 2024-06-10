@@ -11,13 +11,17 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class NewsfeedResponseDto {
     private Long id;
+    private String title;
+    private int recruitmentCount;
     private String content;
     private LocalDateTime created_at;
     private LocalDateTime updated_at;
     private Long user_id;
 
-    public NewsfeedResponseDto(Long feed_id, String content, LocalDateTime created_at, LocalDateTime updated_at, Long user_id) {
-        this.id = feed_id;
+    public NewsfeedResponseDto(Long id, String title, int recruitmentCount, String content, LocalDateTime created_at, LocalDateTime updated_at, Long user_id) {
+        this.id = id;
+        this.title = title;
+        this.recruitmentCount = recruitmentCount;
         this.content = content;
         this.created_at = created_at;
         this.updated_at = updated_at;

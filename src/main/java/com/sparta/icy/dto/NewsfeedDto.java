@@ -8,5 +8,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class NewsfeedDto {
+    private String title;
+    private int recruitmentCount;
     private String content;
 }
