@@ -6,12 +6,12 @@
 <table>
   <tbody>
     <tr>
-      <td align="center"><a href="https://github.com/atimevil/"><img src="" width="100px;" alt=""/><br /><sub><b>팀장 : 김지환 </b></sub></a><br /></td>
-      <td align="center"><a href="https://github.com/gaeun7"><img src="" width="100px;" alt=""/><br /><sub><b>팀원 : 김가은 </b></sub></a><br /></td>
-      <td align="center"><a href="https://github.com/secondJW"><img src="" width="100px;" alt=""/><br /><sub><b>팀원 : 노주연 </b></sub></a><br /></td>
+      <td align="center"><a href="https://github.com/atimevil/"><img src="https://github.com/atimevil/ICY/assets/162283154/23bef26a-bf77-4ca0-b899-6c8004f8d71b" width="130px;" alt=""/><br /><sub><b>팀장 : 김지환 </b></sub></a><br /></td>
+      <td align="center"><a href="https://github.com/gaeun7"><img src="https://github.com/atimevil/ICY/assets/162283154/aa45f41f-e919-4eb9-85b1-f50513440281" width="130px;" alt=""/><br /><sub><b>팀원 : 김가은 </b></sub></a><br /></td>
+      <td align="center"><a href="https://github.com/secondJW"><img src="https://github.com/atimevil/ICY/assets/162283154/813f6157-6712-47c2-a37c-43e8358cab8b" width="130px;" alt=""/><br /><sub><b>팀원 : 노주연 </b></sub></a><br /></td>
      <tr/>
-      <td align="center"><a href="https://github.com/Bomin-Seo?tab=repositories"><img src="" width="100px;" alt=""/><br /><sub><b>팀원 : 서보민 </b></sub></a><br /></td>
-      <td align="center"><a href="https://github.com/dolee2403"><img src="" width="100px;" alt=""/><br /><sub><b>팀원 : 이도 </b></sub></a><br /></td>
+      <td align="center"><a href="https://github.com/Bomin-Seo?tab=repositories"><img src="https://github.com/atimevil/ICY/assets/162283154/738b7472-0349-454d-8376-285c300a3f98" width="130px;" alt=""/><br /><sub><b>팀원 : 서보민 </b></sub></a><br /></td>
+      <td align="center"><a href="https://github.com/dolee2403"><img src="https://github.com/atimevil/ICY/assets/162283154/168217f8-ff63-4804-933f-fc65c6afec05" width="130px;" alt=""/><br /><sub><b>팀원 : 이도 </b></sub></a><br /></td>
     </tr>
   </tbody>
 </table>
