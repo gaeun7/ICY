@@ -52,7 +52,7 @@ public class CommentService {
                 .collect(Collectors.toList());
     }
 
-    public void updateComment(Long comments_id, CommentRequestDto requestDto) {
+    public CommentResponseDto updateComment(Long comments_id, CommentRequestDto requestDto) {
         User currentUser = getUser();
         Comment comment = commentRepository.findById(comments_id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID의 게시물을 찾을 수 없습니다: " + comments_id));
@@ -63,6 +63,7 @@ public class CommentService {
         comment.setContent(requestDto.getContent());
         comment.setUpdated_at(LocalDateTime.now());
         commentRepository.save(comment);
+        return new CommentResponseDto(comment);
     }
 
     public void deleteComment(Long comments_id) {

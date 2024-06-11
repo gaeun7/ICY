@@ -73,10 +73,10 @@ public class WebSecurityConfig {
         http.authorizeHttpRequests((authorizeHttpRequests) ->
                 authorizeHttpRequests
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // 리소스에 대한 접근 허용
-                        .requestMatchers("/user/signup", "/log/**").permitAll() //
-                        .requestMatchers("/newsfeed").permitAll() // 모든 사용자에게 뉴스피드 조회 허용
-                        .requestMatchers("/newsfeed/create").authenticated() // 게시물 작성, 수정, 삭제는 인증 필요
-                        .requestMatchers("/user/signout").authenticated()
+                        .requestMatchers("/users/signup", "/logs/**").permitAll() //
+                        .requestMatchers("/boards").permitAll() // 모든 사용자에게 뉴스피드 조회 허용
+                        .requestMatchers("/boards/create").authenticated() // 게시물 작성, 수정, 삭제는 인증 필요
+                        .requestMatchers("/users/signout").authenticated()
                         .anyRequest().authenticated() // 나머지 요청은 인증 필요
         );
 
