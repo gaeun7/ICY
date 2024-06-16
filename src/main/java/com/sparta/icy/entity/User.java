@@ -43,4 +43,5 @@ public class User extends TimeStamped {
         this.intro = req.getIntro();
         this.password = req.getNewPassword();
     }
+
 }
