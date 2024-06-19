@@ -12,4 +12,8 @@ public class SignoutRequestDto {
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{10,}$",
             message = "비밀번호는 대소문자 포함 영문, 숫자, 특수문자를 최소 1글자씩 포함해야 합니다.")
     private String password;
+
+    public SignoutRequestDto(String password) {
+        this.password = password;
+    }
 }

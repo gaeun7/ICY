@@ -26,4 +26,12 @@ public class SignupRequestDto {
     private String email;
     private boolean isStatus = true;
 
+    public SignupRequestDto(String username, String password, String nickname, String intro, String email) {
+        this.username = username;
+        this.password = password;
+        this.nickname = nickname;
+        this.intro = intro;
+        this.email = email;
+    }
+
 }
